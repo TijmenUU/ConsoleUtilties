@@ -51,9 +51,12 @@ namespace ConsoleBasics
 
 		For Release builds: Please don't expect my functions to deal
 		with absolute bogus arguments (e.g. negative width).
+
+		ASCII == ANSI == 8 bit = 1 byte
+		Unicode == UTF-16 == 16 bit == 2 bytes
 	*/
 
-	// Copies the clipboard to given string if
+	// Attempts to copy the clipboard to given ascii encoded string if
 	// the clipboard has text available
 	// Returns if succesfull
 	static bool SetClipboardContents(std::string input, HWND windowHandle = nullptr)
@@ -87,7 +90,41 @@ namespace ConsoleBasics
 		}
 	}
 
-	// Pastes given string to the clipboard in
+	// Attempts to copy the clipboard to given unicode encoded string if
+	// the clipboard has text available
+	// Returns if succesfull
+	static bool SetClipboardContents(std::wstring input, HWND windowHandle = nullptr)
+	{
+		if (!OpenClipboard(windowHandle))
+			return false;
+		if (EmptyClipboard())
+		{
+			HGLOBAL globalAlloc = GlobalAlloc(GMEM_MOVEABLE, input.size() * sizeof(wchar_t));
+			if (!globalAlloc)
+			{
+				CloseClipboard();
+				return false;
+			}
+			memcpy(GlobalLock(globalAlloc), input.c_str(), input.size() * sizeof(wchar_t));
+			GlobalUnlock(globalAlloc);
+			if (SetClipboardData(CF_TEXT, globalAlloc) == nullptr)
+			{
+				CloseClipboard();
+				GlobalFree(globalAlloc);
+				return false;
+			}
+			CloseClipboard(); // Not much we can do if this fails...
+			GlobalFree(globalAlloc);
+			return true;
+		}
+		else
+		{
+			CloseClipboard();
+			return false;
+		}
+	}
+
+	// Attempts to paste given ascii encoded string to the clipboard in
 	// text format
 	// Returns if succesfull
 	static bool GetClipboardContents(std::string &output, HWND windowHandle = nullptr)
@@ -103,6 +140,32 @@ namespace ConsoleBasics
 				if (clipboardDataPointer != nullptr)
 				{
 					output.assign(static_cast<char*>(clipboardDataPointer));
+				}
+				GlobalUnlock(clipboardData);
+				CloseClipboard();
+				return true;
+			}
+		}
+		CloseClipboard();
+		return false;
+	}
+
+	// Attempts to paste given unicode encoded string to the clipboard in
+	// text format
+	// Returns if succesfull
+	static bool GetClipboardContents(std::wstring &output, HWND windowHandle = nullptr)
+	{
+		if (!OpenClipboard(windowHandle))
+			return false;
+		if (IsClipboardFormatAvailable(CF_TEXT))
+		{
+			HGLOBAL clipboardData = GetClipboardData(CF_TEXT);
+			if (clipboardData != nullptr)
+			{
+				LPVOID clipboardDataPointer = GlobalLock(clipboardData);
+				if (clipboardDataPointer != nullptr)
+				{
+					output.assign(static_cast<wchar_t*>(clipboardDataPointer));
 				}
 				GlobalUnlock(clipboardData);
 				CloseClipboard();
@@ -136,7 +199,10 @@ namespace ConsoleBasics
 	// and stores them in the given INPUT_RECORD array
 	// Interesting event types are KEY_EVENT, MOUSE_EVENT and WINDOW_BUFFER_SIZE_EVENT
 	// Returns if it was succesful
-	static bool GetInput(const HANDLE &consoleInputBuffer, INPUT_RECORD *outputBuffer, int outputBufferSize, unsigned int &itemsRead)
+	static bool GetInput(const HANDLE &consoleInputBuffer, 
+		INPUT_RECORD *outputBuffer, 
+		int outputBufferSize, 
+		unsigned int &itemsRead)
 	{
 		assert(outputBuffer > 0);
 
@@ -155,7 +221,10 @@ namespace ConsoleBasics
 	// Gets the first 128 events from the buffer (doesn't clear the output vectors!)
 	// and stores them in the given vectors
 	// Returns if it was succesful
-	static bool GetInput(const HANDLE &consoleInputBuffer, std::vector<KEY_EVENT_RECORD> &keyboardEvents, std::vector<MOUSE_EVENT_RECORD> &mouseEvents, std::vector<WINDOW_BUFFER_SIZE_RECORD> &windowResizeEvents)
+	static bool GetInput(const HANDLE &consoleInputBuffer, 
+		std::vector<KEY_EVENT_RECORD> &keyboardEvents,
+		std::vector<MOUSE_EVENT_RECORD> &mouseEvents, 
+		std::vector<WINDOW_BUFFER_SIZE_RECORD> &windowResizeEvents)
 	{
 		INPUT_RECORD inputDataBuffer[128];
 		unsigned int itemsRead = 0;
@@ -233,7 +302,9 @@ namespace ConsoleBasics
 
 	// Reads what is displayed on screen on a given location, 
 	// Returns if succesful, if reading out of bounds it returns false as well
-	static bool GetCharFromConsole(const HANDLE &consoleScreenBuffer, const COORD location, CHAR_INFO &outputBuffer)
+	static bool GetCharFromConsole(const HANDLE &consoleScreenBuffer, 
+		const COORD location, 
+		CHAR_INFO &outputBuffer)
 	{
 		assert(location.X >= 0 && location.Y >= 0);
 
@@ -253,7 +324,9 @@ namespace ConsoleBasics
 	// If you give it an area (partially) outside of bounds the readArea will contain the actual read area
 	// Returns false if the read area is completely out of bounds
 	// Returns if succesful
-	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, SMALL_RECT &readArea, CHAR_INFO **outputBuffer)
+	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, 
+		SMALL_RECT &readArea, 
+		CHAR_INFO **outputBuffer)
 	{
 		assert(readArea.Bottom > readArea.Top && readArea.Right > readArea.Left);
 
@@ -267,7 +340,13 @@ namespace ConsoleBasics
 	// Returns false if area is completely out of bounds
 	// The delimiter tells you when the next row starts, last row does not have a trailing delimiter
 	// Returns if succesful
-	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, const int positionX, const int positionY, const int width, const int height, std::string &outputBuffer, char delimiter = '\n')
+	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, 
+		const int positionX, 
+		const int positionY, 
+		const int width, 
+		const int height, 
+		std::string &outputBuffer, 
+		char delimiter = '\n')
 	{
 		assert(width > 0 && height > 0); // Technically the position can be anywhere
 
@@ -313,7 +392,13 @@ namespace ConsoleBasics
 	// If you give it an area (partially) outside of bounds the behaviour is undefined
 	// The delimiter tells you when the next row starts, last row does not have a trailing delimiter
 	// Returns if succesful
-	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, const int positionX, const int positionY, const int width, const int height, std::wstring &outputBuffer, wchar_t delimiter = '\n')
+	static bool GetRectFromConsole(const HANDLE &consoleScreenBuffer, 
+		const int positionX, 
+		const int positionY, 
+		const int width, 
+		const int height, 
+		std::wstring &outputBuffer, 
+		wchar_t delimiter = '\n')
 	{
 		assert(height > 0 && width > 0);
 
@@ -357,8 +442,10 @@ namespace ConsoleBasics
 	}
 
 	// Prints to a given location. Won't check if the string fits or not
-	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const char* string, const int stringSize)
+	// Return value is always true
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const char* string, 
+		const int stringSize)
 	{
 		assert(stringSize > 0);
 
@@ -367,8 +454,10 @@ namespace ConsoleBasics
 	}
 
 	// Prints to a given location. Won't check if the string fits or not
-	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const wchar_t* string, const int stringSize)
+	// Return value is always true
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const wchar_t* string, 
+		const int stringSize)
 	{
 		assert(stringSize > 0);
 		
@@ -377,7 +466,7 @@ namespace ConsoleBasics
 	}
 
 	// Prints to a given location. Won't check if the string fits or not
-	// Returns if succesful
+	// Return value is always true
 	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::string string)
 	{
 		WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
@@ -385,7 +474,7 @@ namespace ConsoleBasics
 	}
 
 	// Prints to a given location. Won't check if the string fits or not
-	// Returns if succesful
+	// Return value is always true
 	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::wstring string)
 	{
 		WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
@@ -394,7 +483,10 @@ namespace ConsoleBasics
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const char* string, const int stringSize, const COORD position)
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const char* string, 
+		const int stringSize, 
+		const COORD position)
 	{
 		assert(stringSize > 0);
 
@@ -408,7 +500,10 @@ namespace ConsoleBasics
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const wchar_t* string, const int stringSize, const COORD position)
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const wchar_t* string, 
+		const int stringSize, 
+		const COORD position)
 	{
 		assert(stringSize > 0);
 
@@ -422,7 +517,9 @@ namespace ConsoleBasics
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::string string, const COORD position)
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const std::string string, 
+		const COORD position)
 	{
 		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
 		{
@@ -434,7 +531,9 @@ namespace ConsoleBasics
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::wstring string, const COORD position)
+	static bool WriteToConsole(const HANDLE &consoleScreenBuffer, 
+		const std::wstring string, 
+		const COORD position)
 	{
 		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
 		{
@@ -446,7 +545,9 @@ namespace ConsoleBasics
 
 	// Closes the output handle and restores the input handle created by the console
 	// Returns if succesfull
-	static bool DeleteConsole(HANDLE &consoleScreenBuffer, HANDLE &inputBuffer, DWORD previousInputBufferConfig)
+	static bool DeleteConsole(HANDLE &consoleScreenBuffer, 
+		HANDLE &inputBuffer, 
+		DWORD previousInputBufferConfig)
 	{
 		return CloseHandle(consoleScreenBuffer) && SetConsoleMode(inputBuffer, previousInputBufferConfig);
 	}
@@ -639,7 +740,10 @@ namespace ConsoleHelperObjects
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const char* message, const int messageSize, const ConsoleBasics::FONTCOLOR fontColor, const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+		void Print(const char* message, 
+			const int messageSize, 
+			const ConsoleBasics::FONTCOLOR fontColor, 
+			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
 			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
@@ -647,7 +751,10 @@ namespace ConsoleHelperObjects
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const wchar_t* message, const int messageSize, const ConsoleBasics::FONTCOLOR fontColor, const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+		void Print(const wchar_t* message, 
+			const int messageSize, 
+			const ConsoleBasics::FONTCOLOR fontColor, 
+			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
 			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
@@ -655,7 +762,9 @@ namespace ConsoleHelperObjects
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::string message, const ConsoleBasics::FONTCOLOR fontColor, const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+		void Print(const std::string message, 
+			const ConsoleBasics::FONTCOLOR fontColor, 
+			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
 			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
@@ -663,7 +772,9 @@ namespace ConsoleHelperObjects
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::wstring message, const ConsoleBasics::FONTCOLOR fontColor, const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+		void Print(const std::wstring message, 
+			const ConsoleBasics::FONTCOLOR fontColor, 
+			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
 			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
@@ -932,13 +1043,14 @@ namespace ConsoleHelperObjects
 			return *this;
 		}
 
+		// TODO differentiate between ascii and unicode strings
 		Console& operator << (std::istream &in)
 		{
 			Print(std::string(std::istreambuf_iterator<char>(in), {}));
 			return *this;
 		}
 
-		// Possibly do output streams >>
+		// TODO output streams >>
 
 		// Getters and setters
 		void SetCursorPosition(const int x, const int y)
@@ -965,62 +1077,4 @@ namespace ConsoleHelperObjects
 	};
 }
 
-/* Move this to seperate header
-class Menu
-{
-protected:
-	std::string description;
-	std::function<void()> action;
-	std::vector<std::shared_ptr<Menu>> UIelements;
-	int selectedElement = 0;
-
-public:
-	Menu(std::string desc, std::function<void()> _action)
-	{
-		description = desc;
-		action = _action;
-		selectedElement = 0;
-	}
-
-	virtual void Next()
-	{
-		selectedElement++;
-		if (selectedElement >= UIelements.size())
-			selectedElement = 0;
-	}
-
-	virtual void Previous()
-	{
-		selectedElement--;
-		if (selectedElement < 0)
-			selectedElement = UIelements.size() - 1;
-	}
-
-	virtual void Print()
-	{
-		for (int i = 0; i < UIelements.size(); ++i)
-		{
-			if (selectedElement == i)
-			{
-				std::cout << "-- " << UIelements[i] << std::endl;
-			}
-			else
-				std::cout << UIelements[i] << std::endl;
-		}
-	}
-
-	virtual void Activate()
-	{
-		if (action != nullptr)
-		{
-			action();
-		}
-	}
-
-	virtual void ActivateSelected()
-	{
-		UIelements[selectedElement].get()->Activate();
-	}
-};
-*/
 #endif
