@@ -1,5 +1,5 @@
 # ConsoleUtilties
-A header-only library to get a STD experience with the Windows console in C++. Written for personal projects, but made public as practice to write readable code for others too. 
+A header-only library to get an STD experience with the Windows console in C++. Written for personal projects, but made public as practice to write readable code for others too. 
 
 For now it remains in ALPHA state. What does this mean?
   - It still requires some thorough testing
