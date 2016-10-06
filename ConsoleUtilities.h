@@ -107,7 +107,7 @@ namespace ConsoleBasics
 			}
 			memcpy(GlobalLock(globalAlloc), input.c_str(), input.size() * sizeof(wchar_t));
 			GlobalUnlock(globalAlloc);
-			if (SetClipboardData(CF_TEXT, globalAlloc) == nullptr)
+			if (SetClipboardData(CF_UNICODETEXT, globalAlloc) == nullptr)
 			{
 				CloseClipboard();
 				GlobalFree(globalAlloc);
@@ -157,9 +157,9 @@ namespace ConsoleBasics
 	{
 		if (!OpenClipboard(windowHandle))
 			return false;
-		if (IsClipboardFormatAvailable(CF_TEXT))
+		if (IsClipboardFormatAvailable(CF_UNICODETEXT))
 		{
-			HGLOBAL clipboardData = GetClipboardData(CF_TEXT);
+			HGLOBAL clipboardData = GetClipboardData(CF_UNICODETEXT);
 			if (clipboardData != nullptr)
 			{
 				LPVOID clipboardDataPointer = GlobalLock(clipboardData);
