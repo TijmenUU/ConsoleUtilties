@@ -1,6 +1,12 @@
 # ConsoleUtilties
-A header-only library to get an STD experience with the Windows console in C++. Written for personal projects, but made public as practice to write readable code for others too. 
+A header-only library to get an STD experience with the Windows console in C++. Written for personal projects, but made public as practice to write readable code for others too.
 
+# What is this for?
+Any platform running Windows (Win2K - Win10). This is for people wanting that extra control over the console. Put text at specific coordinates. Use some fancy colors to highlight the important bits. Maybe even use the mouse, or handle window resizing events! All of this and more is made relatively easy with this header library. It at least spares you from doing a bunch of it yourself. For some implementation pointers see the Console class in the namespace ConsoleHelperObjects, or use the console class yourself as it pretty much wraps it all in a nice package for you. 
+
+And even for the people with no CTRL+C / CTRL+V capabilities with their console (I believe that is Windows 10 only?): you can easily build that yourself. The pasting is even already there, just listen for the CTRL + V event. 
+
+# Work in progress
 For now it remains in ALPHA state. What does this mean?
   - It still requires some thorough testing
   - It still lacks some essential features that are planned
