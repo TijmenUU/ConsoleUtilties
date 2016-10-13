@@ -1,14 +1,6 @@
 #ifndef CONSOLE_UTILITIES_H_
 #define CONSOLE_UTILITIES_H_
 
-#pragma once
-#include <cassert>
-#include <functional>
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <Windows.h>
-
 /*
 	ALPHA V0.2
 	
@@ -38,7 +30,16 @@
 	functionality without having to rewrite the interfacing with the 
 	Windows API as much.
 */
-namespace ConsoleBasics
+
+#pragma once
+#include <cassert>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <Windows.h>
+
+namespace ConsoleBasic
 {
 	/*
 		If any of these functions return false, check
@@ -604,7 +605,7 @@ namespace ConsoleBasics
 	- Color entire screen
 	- Test, test and test
 */
-namespace ConsoleHelperObjects
+namespace ConsoleObject
 {
 	//class 
 
@@ -623,46 +624,46 @@ namespace ConsoleHelperObjects
 			inputBuffer_ = GetStdHandle(STD_INPUT_HANDLE);
 			previousOutputHandle_ = GetStdHandle(STD_OUTPUT_HANDLE);
 			// output
-			if (!ConsoleBasics::InitConsole(screenBuffer_))
+			if (!ConsoleBasic::InitConsole(screenBuffer_))
 			{
 				throw std::exception("Console: Failed to create a console window.");
 			}
-			if (!ConsoleBasics::SetScreenBuffer(screenBuffer_))
+			if (!ConsoleBasic::SetScreenBuffer(screenBuffer_))
 			{
 				CloseHandle(screenBuffer_);
 				throw std::exception("Console: Failed to set screenbuffer to active.");
 			}
-			if (!ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_))
+			if (!ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_))
 			{
 				CloseHandle(screenBuffer_);
 				throw std::exception("Console: Failed to get screenbuffer info.");
 			}
 			// input
-			if (!ConsoleBasics::EnableConsoleInput(inputBuffer_, previousInputConfig_))
+			if (!ConsoleBasic::EnableConsoleInput(inputBuffer_, previousInputConfig_))
 			{
 				CloseHandle(screenBuffer_);
 				throw std::exception("Console: Failed to get input handle.");
 			}
 
-			SetFontColor(ConsoleBasics::FONTCOLOR::WHITE);
-			SetBackgroundColor(ConsoleBasics::BACKGROUNDCOLOR::BLACK);
+			SetFontColor(ConsoleBasic::FONTCOLOR::WHITE);
+			SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR::BLACK);
 		}
 		// Restores the original i/o handles and closes the used ones
 		// Throws and std::exception if something went wrong
 		~Console()
 		{
-			if (!ConsoleBasics::DeleteConsole(screenBuffer_, inputBuffer_, previousInputConfig_))
+			if (!ConsoleBasic::DeleteConsole(screenBuffer_, inputBuffer_, previousInputConfig_))
 			{
 				std::cerr << "Console: Failed to clean up! Possible open handles left!\n";
 			}
 		}
 
-		void SetFontColor(ConsoleBasics::FONTCOLOR color)
+		void SetFontColor(ConsoleBasic::FONTCOLOR color)
 		{
 			currentFontColor_ = static_cast<int>(color);
 		}
 
-		void SetBackgroundColor(ConsoleBasics::BACKGROUNDCOLOR color)
+		void SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR color)
 		{
 			currentBGColor_ = static_cast<int>(color);
 		}
@@ -673,8 +674,8 @@ namespace ConsoleHelperObjects
 			assert(messageSize > 0);
 			
 			SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, prints using stored color info
@@ -683,24 +684,24 @@ namespace ConsoleHelperObjects
 			assert(messageSize > 0);
 
 			SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, prints using stored color info
 		void Print(const std::string message)
 		{
 			SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, prints using stored color info
 		void Print(const std::wstring message)
 		{
 			SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
@@ -709,8 +710,8 @@ namespace ConsoleHelperObjects
 			assert(messageSize > 0);
 
 			SetConsoleTextAttribute(screenBuffer_, premixedColors);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
@@ -719,66 +720,66 @@ namespace ConsoleHelperObjects
 			assert(messageSize > 0);
 
 			SetConsoleTextAttribute(screenBuffer_, premixedColors);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::string message, DWORD premixedColors)
 		{
 			SetConsoleTextAttribute(screenBuffer_, premixedColors);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::wstring message, DWORD premixedColors)
 		{
 			SetConsoleTextAttribute(screenBuffer_, premixedColors);
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const char* message, 
 			const int messageSize, 
-			const ConsoleBasics::FONTCOLOR fontColor, 
-			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+			const ConsoleBasic::FONTCOLOR fontColor, 
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const wchar_t* message, 
 			const int messageSize, 
-			const ConsoleBasics::FONTCOLOR fontColor, 
-			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+			const ConsoleBasic::FONTCOLOR fontColor, 
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::string message, 
-			const ConsoleBasics::FONTCOLOR fontColor, 
-			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+			const ConsoleBasic::FONTCOLOR fontColor, 
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::wstring message, 
-			const ConsoleBasics::FONTCOLOR fontColor, 
-			const ConsoleBasics::BACKGROUNDCOLOR backgroundColor)
+			const ConsoleBasic::FONTCOLOR fontColor, 
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
 		{
 			SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-			ConsoleBasics::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-			ConsoleBasics::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+			ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+			ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 		}
 
 		// Returns the first key down
@@ -790,7 +791,7 @@ namespace ConsoleHelperObjects
 			while (true)
 			{
 				unsigned int itemsRead = 0;
-				ConsoleBasics::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
+				ConsoleBasic::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
 				for (int i = 0; i < itemsRead; ++i)
 				{
 					if (inputs[i].EventType == KEY_EVENT)
@@ -832,7 +833,7 @@ namespace ConsoleHelperObjects
 			bool waiting = true;
 			while (waiting)
 			{
-				ConsoleBasics::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
+				ConsoleBasic::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
 				for (int i = 0; i < itemsRead; ++i)
 				{
 					// We only want key up events here
@@ -866,7 +867,7 @@ namespace ConsoleHelperObjects
 			bool waiting = true;
 			while (waiting)
 			{
-				ConsoleBasics::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
+				ConsoleBasic::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
 				for (int i = 0; i < itemsRead; ++i)
 				{
 					// We only want key up events here
@@ -900,11 +901,11 @@ namespace ConsoleHelperObjects
 			int previousSize = 0;
 			bool waiting = true;
 			CHAR_INFO oldStyle;
-			ConsoleBasics::GetCharFromConsole(screenBuffer_, screenBufferInfo_.dwCursorPosition, oldStyle);
+			ConsoleBasic::GetCharFromConsole(screenBuffer_, screenBufferInfo_.dwCursorPosition, oldStyle);
 
 			while (waiting)
 			{
-				ConsoleBasics::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
+				ConsoleBasic::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
 				int currentSize = previousSize;
 				for (int i = 0; i < itemsRead; ++i)
 				{
@@ -959,11 +960,11 @@ namespace ConsoleHelperObjects
 			int previousSize = 0;
 			bool waiting = true;
 			CHAR_INFO oldStyle;
-			ConsoleBasics::GetCharFromConsole(screenBuffer_, screenBufferInfo_.dwCursorPosition, oldStyle);
+			ConsoleBasic::GetCharFromConsole(screenBuffer_, screenBufferInfo_.dwCursorPosition, oldStyle);
 
 			while (waiting)
 			{
-				ConsoleBasics::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
+				ConsoleBasic::GetInput(inputBuffer_, &inputs[0], 8, itemsRead);
 				int currentSize = previousSize;
 				for (int i = 0; i < itemsRead; ++i)
 				{
