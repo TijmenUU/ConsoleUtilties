@@ -2,7 +2,7 @@
 #define CONSOLEOBJECTS_H
 
 /*
-ALPHA V0.2
+ALPHA V0.3
 
 Copyright (c) 2016  Tijmen van Nesselrooij
 
@@ -25,7 +25,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
-#include "..\ConsoleUtilities.h"
+#include "ConsoleUtilities.h"
 
 namespace ConsoleObject
 {
@@ -40,10 +40,13 @@ namespace ConsoleObject
 		virtual void Select(const HANDLE outputHandle); // Hovering over the item
 		virtual void Deselect(const HANDLE outputHandle); // Stop hovering over the item
 		virtual void Activate(const HANDLE outputHandle); // Keyboard or mouse activation on item
-		std::string GetDescription() const;
+		std::string GetDescription() const
+		{
+			return description_;
+		}
 	};
 
-	enum MENUITEM_ORDER { HORIZONTAL, VERTICAL, DIAGONAL_TOPLEFT, DIAGONAL_TOPRIGHT };
+	enum class MENUITEM_ORDER { HORIZONTAL, VERTICAL};
 
 	class Menu
 	{
@@ -54,14 +57,18 @@ namespace ConsoleObject
 		int positionX_;
 		int positionY_;
 	public:
-		Menu(const MENUITEM_ORDER displayOrder, const int positionX = 0, const int positionY = 0);
+		Menu(const MENUITEM_ORDER displayOrder = MENUITEM_ORDER::VERTICAL, const int positionX = 0, const int positionY = 0);
 		~Menu();
+		// Highlight the next item (wraps around)
 		void NextItem(const HANDLE outputHandle);
+		// Highlight the previous item (wraps around)
 		void PreviousItem(const HANDLE outputHandle);
-		void InsertItem(const MenuItem item, const int location = -1); // Insert a new MenuItem, -1 means insert as last
-		bool DeleteItem(const int location); // Delete the menu item from given position
-		void HandleKeyInput(const HANDLE outputHandle, const HANDLE inputHandle);
-		void HandleMouseInput(const HANDLE outputHandle, const HANDLE inputHandle);
+		// Insert a new MenuItem, -1 means insert as last, 0 is first
+		void InsertItem(const MenuItem item, const int location = -1); 
+		// Delete the menu item from given position
+		bool DeleteItem(const int location); 
+		void HandleKeybInput(const INPUT_RECORD key, const HANDLE outputHandle);
+		void HandleMouseInput(const INPUT_RECORD mouseAction, const HANDLE outputHandle);
 		void Draw(const HANDLE outputHandle);
 	};
 

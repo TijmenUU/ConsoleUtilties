@@ -1,8 +1,8 @@
-#ifndef CONSOLE_UTILITIES_H_
-#define CONSOLE_UTILITIES_H_
+#ifndef CONSOLE_UTILITIES_H
+#define CONSOLE_UTILITIES_H
 
 /*
-	ALPHA V0.2
+	ALPHA V0.3
 	
 	Copyright (c) 2016  Tijmen van Nesselrooij
 
@@ -1074,6 +1074,18 @@ namespace ConsoleObject
 		{
 			x = screenBufferInfo_.dwCursorPosition.X;
 			y = screenBufferInfo_.dwCursorPosition.Y;
+		}
+
+		// Do not use this if you don't know what you're doing
+		HANDLE _GetInputHandle() const
+		{
+			return inputBuffer_;
+		}
+
+		// Do not use this if you don't know what you're doing
+		HANDLE _GetOutputHandle() const
+		{
+			return screenBuffer_;
 		}
 	};
 }
