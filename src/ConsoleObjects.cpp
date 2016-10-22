@@ -55,4 +55,24 @@ namespace ConsoleObject
 	{
 
 	}
+
+	void MenuItem::SetPositionX(const int positionX)
+	{
+		positionX_ = positionX;
+	}
+
+	void MenuItem::SetPositionY(const int positionY)
+	{
+		positionY_ = positionY;
+	}
+
+	int MenuItem::GetPositionX() const
+	{
+		return positionX_;
+	}
+	
+	int MenuItem::GetPositionY() const
+	{
+		return positionY_;
+	}
 }

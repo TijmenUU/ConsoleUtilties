@@ -32,7 +32,10 @@ namespace ConsoleObject
 	class MenuItem
 	{
 	protected:
+		int positionX_, positionY_;
 		std::string description_;
+		ConsoleBasic::FONTCOLOR fontColor_;
+		ConsoleBasic::BACKGROUNDCOLOR backgroundColor_;
 	public:
 		MenuItem(std::string description);
 		~MenuItem();
@@ -44,6 +47,10 @@ namespace ConsoleObject
 		{
 			return description_;
 		}
+		void SetPositionX(const int positionX);
+		void SetPositionY(const int positionY);
+		int GetPositionX() const;
+		int GetPositionY() const;
 	};
 
 	enum class MENUITEM_ORDER { HORIZONTAL, VERTICAL};
@@ -70,13 +77,6 @@ namespace ConsoleObject
 		void HandleKeybInput(const INPUT_RECORD key, const HANDLE outputHandle);
 		void HandleMouseInput(const INPUT_RECORD mouseAction, const HANDLE outputHandle);
 		void Draw(const HANDLE outputHandle);
-	};
-
-	class DisplayItem : MenuItem
-	{
-	public:
-		DisplayItem();
-		~DisplayItem();
 	};
 
 	class RadioButtonItem : MenuItem
