@@ -1,5 +1,5 @@
-#ifndef CONSOLEUTILITIES_H
-#define CONSOLEUTILITIES_H
+#ifndef CONSOLEFUNC_H
+#define CONSOLEFUNC_H
 #pragma once 
 
 /*

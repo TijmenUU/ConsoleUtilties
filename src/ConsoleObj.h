@@ -1,5 +1,5 @@
-#ifndef CONSOLEOBJECTS_H
-#define CONSOLEOBJECTS_H
+#ifndef CONSOLEOBJ_H
+#define CONSOLEOBJ_H
 #pragma once 
 
 /*
@@ -25,7 +25,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "ConsoleUtilities.h"
+#include "ConsoleFunc.h"
 #include <iostream>
 
 namespace ConsoleObj

@@ -21,7 +21,7 @@
 	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "ConsoleUtilities.h"
+#include "ConsoleFunc.h"
 
 namespace ConsoleFunc
 {
