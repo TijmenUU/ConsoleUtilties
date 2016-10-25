@@ -3,7 +3,7 @@ Current version is 0.4 and it is in ALPHA stage.
 
 ConsoleFunc (.h && .cpp) contain functions useful for console work. This ranges from input to ouput, clipboard pasting and copying and creating handles. Everything basic is in here. Start looking here if you want start building classes yourself.
 
-ConsoleObj (.h && .cpp) contains helper objects that make use of the functions defined in ConsoleFunc.cpp. For example the class Cout, which mimics the std::cout behaviour, an easy solution if you just want to print pretty colors and not worry about where to get your HANDLE's. A std::cin equivalent is in the making, I have to sort out output streams before that though. Other objects are menu structures
+ConsoleObj (.h && .cpp) contains helper objects that make use of the functions defined in ConsoleFunc.cpp. For example the class Cout, which mimics the std::cout behaviour, an easy solution if you just want to print pretty colors and not worry about where to get your HANDLE's. A std::cin equivalent is in the making, I have to sort out output streams before that though. Other objects are menu structures, to easily create a TUI.
 
 For now I will refer to the header files for explanation what each function and object does. If there is no description there it should be self explanatory or probably means it shouldn't be used yet.
 
