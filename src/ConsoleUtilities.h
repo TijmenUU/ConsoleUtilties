@@ -1,5 +1,5 @@
-#ifndef CONSOLE_UTILITIES_H
-#define CONSOLE_UTILITIES_H
+#ifndef CONSOLEUTILITIES_H
+#define CONSOLEUTILITIES_H
 #pragma once 
 
 /*
@@ -37,7 +37,7 @@
 #include <vector>
 #include <Windows.h>
 
-namespace ConsoleBasic
+namespace ConsoleFunc
 {
 	/*
 		If any of these functions return false, check
@@ -79,27 +79,27 @@ namespace ConsoleBasic
 #pragma endregion
 	// Get the current Active Window handle
 	// Returns if succesfull
-	inline bool GetWindowHandle(HWND &windowHandle);
+	bool GetWindowHandle(HWND &windowHandle);
 
 	// Stores the current input configuration in previousInputBufferConfig
 	// and stores the current input handle to consoleInputBuffer with mouse and window inputs
 	// You do not have to initialize the consoleInputBuffer handle
 	// Returns if succesful
-	inline bool EnableConsoleInput(HANDLE &consoleInputBuffer, DWORD &previousInputBufferConfig);
+	bool EnableConsoleInput(HANDLE &consoleInputBuffer, DWORD &previousInputBufferConfig);
 
 	// Handle parameter will contain the new handle
 	// Returns if succesfull
-	inline bool InitConsole(HANDLE &consoleScreenBuffer);
+	bool InitConsole(HANDLE &consoleScreenBuffer);
 
 	// Sets the console screenbuffer to the given handle, returns if succesful
-	inline bool SetScreenBuffer(const HANDLE &consoleScreenBuffer);
+	bool SetScreenBuffer(const HANDLE &consoleScreenBuffer);
 
 	// Stores the window data in the second parameter, returns if succesful
-	inline bool GetConsoleInfo(const HANDLE &consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO &consoleInfo);
+	bool GetConsoleInfo(const HANDLE &consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO &consoleInfo);
 
 	// Combines the init, setting screen buffer and fetching console buffer info
 	// Returns if succesful
-	inline bool SetupConsole(HANDLE &consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO &consoleInfo);
+	bool SetupConsole(HANDLE &consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO &consoleInfo);
 
 #pragma region Console Input
 	// Reads what is displayed on screen on a given location, 
@@ -143,47 +143,47 @@ namespace ConsoleBasic
 #pragma region Console Output
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const char* string,
 		const int stringSize);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const wchar_t* string,
 		const int stringSize);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::string string);
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::string string);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::wstring string);
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer, const std::wstring string);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const char* string,
 		const int stringSize,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const wchar_t* string,
 		const int stringSize,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const std::string string,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	inline bool WriteToConsole(const HANDLE &consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE &consoleScreenBuffer,
 		const std::wstring string,
 		const COORD position);
 #pragma endregion
@@ -192,7 +192,7 @@ namespace ConsoleBasic
 	// and stores them in the given INPUT_RECORD array
 	// Interesting event types are KEY_EVENT, MOUSE_EVENT and WINDOW_BUFFER_SIZE_EVENT
 	// Returns if it was succesful
-	inline bool GetInput(const HANDLE &consoleInputBuffer,
+	bool GetInput(const HANDLE &consoleInputBuffer,
 		INPUT_RECORD *outputBuffer,
 		int outputBufferSize,
 		unsigned int &itemsRead);
@@ -221,12 +221,12 @@ namespace ConsoleBasic
 	// Returns the first key down, similar to GETCH, ascii encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	inline char GetChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
+	char GetChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
 
 	// Returns the first key down, similar to GETCH, ascii encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	inline char GetChar(const HANDLE consoleInputBuffer,
+	char GetChar(const HANDLE consoleInputBuffer,
 		INPUT_RECORD *inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
@@ -234,12 +234,12 @@ namespace ConsoleBasic
 	// Returns the first key down, similar to GETCH, unicode encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	inline wchar_t GetWChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
+	wchar_t GetWChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
 
 	// Returns the first key down, similar to GETCH, unicode encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	inline wchar_t GetWChar(const HANDLE consoleInputBuffer,
+	wchar_t GetWChar(const HANDLE consoleInputBuffer,
 		INPUT_RECORD *inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
@@ -329,7 +329,7 @@ namespace ConsoleBasic
 
 	// Closes the output handle and restores the input handle created by the console
 	// Returns if succesfull
-	inline bool DeleteInputHandle(HANDLE &inputBuffer, DWORD previousInputBufferConfig);
+	bool DeleteInputHandle(HANDLE &inputBuffer, DWORD previousInputBufferConfig);
 
 	enum class FONTCOLOR {
 		BLACK = 0x00,

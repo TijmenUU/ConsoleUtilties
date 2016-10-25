@@ -1,7 +1,3 @@
-#ifndef MAIN_CPP
-#define MAIN_CPP
-#pragma once
-
 /*
 ALPHA V0.3
 
@@ -26,30 +22,29 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "ConsoleObjects.h"
+#include "ConsoleUtilities.h"
 
 int main(int argc, char** argv)
 {
-	ConsoleObject::Cout cout;
+	ConsoleObj::Cout cout;
 	HANDLE inputHandle;
 	DWORD inputConfigBackup;
 
-	ConsoleBasic::EnableConsoleInput(inputHandle, inputConfigBackup);
+	ConsoleFunc::EnableConsoleInput(inputHandle, inputConfigBackup);
 
-	cout.SetFontColor(ConsoleBasic::FONTCOLOR::GREEN);
-	cout.SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR::DARKBLUE);
+	cout.SetFontColor(ConsoleFunc::FONTCOLOR::GREEN);
+	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKBLUE);
 
-	std::string input = ConsoleBasic::GetLineVisualized(cout._GetOutputHandle(),
+	std::string input = ConsoleFunc::GetLineVisualized(cout._GetOutputHandle(),
 	inputHandle,
 	cout.GetConsoleScreenBufferInfo());
 
-	cout.SetFontColor(ConsoleBasic::FONTCOLOR::RED);
-	cout.SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR::DARKYELLOW);
+	cout.SetFontColor(ConsoleFunc::FONTCOLOR::RED);
+	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKYELLOW);
 
 	cout << input << "\n\n" << "Press any key to exit...";
 
-	ConsoleBasic::GetChar(inputHandle);
+	ConsoleFunc::GetChar(inputHandle);
 
 	return 0;
 }
-
-#endif // !MAIN_CPP

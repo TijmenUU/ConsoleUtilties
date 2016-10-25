@@ -1,7 +1,3 @@
-#ifndef CONSOLEUTILITIES_CPP
-#define CONSOLEUTILITIES_CPP
-#pragma once
-
 /*
 	ALPHA V0.3
 
@@ -27,7 +23,7 @@
 
 #include "ConsoleUtilities.h"
 
-namespace ConsoleBasic
+namespace ConsoleFunc
 {
 	bool SetClipboardContents(std::string input, HWND windowHandle)
 	{
@@ -849,4 +845,3 @@ namespace ConsoleBasic
 	}
 
 }
-#endif // !CONSOLEUTILITIES_CPP
