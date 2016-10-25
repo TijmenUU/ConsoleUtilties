@@ -3,7 +3,7 @@
 #pragma once 
 
 /*
-	ALPHA V0.3
+	ALPHA V0.4
 	
 	Copyright (c) 2016 Tijmen van Nesselrooij
 
@@ -369,4 +369,4 @@ namespace ConsoleFunc
 		WHITE = 0xF0
 	};
 }
-#endif // !CONSOLE_UTILITIES_H
+#endif // !CONSOLEFUNC_H

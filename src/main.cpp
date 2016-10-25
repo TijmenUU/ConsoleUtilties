@@ -1,5 +1,5 @@
 /*
-ALPHA V0.3
+ALPHA V0.4
 
 Copyright (c) 2016  Tijmen van Nesselrooij
 
@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	std::string input = ConsoleFunc::GetLineVisualized(cout._GetOutputHandle(),
 	inputHandle,
 	cout.GetConsoleScreenBufferInfo());
+	cout.UpdateCursor(); // Since Get Line Visualized prints our keystrokes we need to do this
 
 	cout.SetFontColor(ConsoleFunc::FONTCOLOR::RED);
 	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKYELLOW);

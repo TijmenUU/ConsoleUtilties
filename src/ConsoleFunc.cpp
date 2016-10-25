@@ -1,5 +1,5 @@
 /*
-	ALPHA V0.3
+	ALPHA V0.4
 
 	Copyright (c) 2016  Tijmen van Nesselrooij
 

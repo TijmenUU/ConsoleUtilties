@@ -1,5 +1,5 @@
 /*
-ALPHA V0.3
+ALPHA V0.4
 
 Copyright (c) 2016  Tijmen van Nesselrooij
 
@@ -160,6 +160,11 @@ namespace ConsoleObj
 	{
 		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
 		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+	}
+
+	void Cout::UpdateCursor()
+	{
 		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
