@@ -1,7 +1,3 @@
-#ifndef CONSOLEOBJECTS_CPP
-#define CONSOLEOBJECTS_CPP
-#pragma once
-
 /*
 ALPHA V0.3
 
@@ -25,34 +21,32 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "ConsoleObjects.h"
+#include "ConsoleObj.h"
 
-namespace ConsoleObject
+namespace ConsoleObj
 {
 #pragma region Cin Cout
 	Cout::Cout()
 	{
+		previousOutputHandle_ = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		if (!ConsoleFunc::InitConsole(screenBuffer_))
 		{
-			previousOutputHandle_ = GetStdHandle(STD_OUTPUT_HANDLE);
-
-			if (!ConsoleBasic::InitConsole(screenBuffer_))
-			{
-				throw std::exception("Cout: Failed to create a console window.");
-			}
-			if (!ConsoleBasic::SetScreenBuffer(screenBuffer_))
-			{
-				CloseHandle(screenBuffer_);
-				throw std::exception("Cout: Failed to set screenbuffer to active.");
-			}
-			if (!ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_))
-			{
-				CloseHandle(screenBuffer_);
-				throw std::exception("Cout: Failed to get screenbuffer info.");
-			}
-
-			SetFontColor(ConsoleBasic::FONTCOLOR::WHITE);
-			SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR::BLACK);
+			throw std::exception("Cout: Failed to create a console window.");
 		}
+		if (!ConsoleFunc::SetScreenBuffer(screenBuffer_))
+		{
+			CloseHandle(screenBuffer_);
+			throw std::exception("Cout: Failed to set screenbuffer to active.");
+		}
+		if (!ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_))
+		{
+			CloseHandle(screenBuffer_);
+			throw std::exception("Cout: Failed to get screenbuffer info.");
+		}
+
+		SetFontColor(ConsoleFunc::FONTCOLOR::WHITE);
+		SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::BLACK);
 	}
 
 	Cout::~Cout()
@@ -67,12 +61,12 @@ namespace ConsoleObject
 		}
 	}
 
-	void Cout::SetFontColor(ConsoleBasic::FONTCOLOR color)
+	void Cout::SetFontColor(ConsoleFunc::FONTCOLOR color)
 	{
 		currentFontColor_ = static_cast<int>(color);
 	}
 
-	void Cout::SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR color)
+	void Cout::SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR color)
 	{
 		currentBGColor_ = static_cast<int>(color);
 	}
@@ -82,8 +76,8 @@ namespace ConsoleObject
 		assert(messageSize > 0);
 
 		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const wchar_t * message, const int messageSize)
@@ -91,22 +85,22 @@ namespace ConsoleObject
 		assert(messageSize > 0);
 
 		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const std::string message)
 	{
 		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const std::wstring message)
 	{
 		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const char * message, const int messageSize, DWORD premixedColors)
@@ -114,8 +108,8 @@ namespace ConsoleObject
 		assert(messageSize > 0);
 
 		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const wchar_t * message, const int messageSize, DWORD premixedColors)
@@ -123,50 +117,50 @@ namespace ConsoleObject
 		assert(messageSize > 0);
 
 		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const std::string message, DWORD premixedColors)
 	{
 		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	void Cout::Print(const std::wstring message, DWORD premixedColors)
 	{
 		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
-	void Cout::Print(const char * message, const int messageSize, const ConsoleBasic::FONTCOLOR fontColor, const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
+	void Cout::Print(const char * message, const int messageSize, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
 	{
 		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
-	void Cout::Print(const wchar_t * message, const int messageSize, const ConsoleBasic::FONTCOLOR fontColor, const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
+	void Cout::Print(const wchar_t * message, const int messageSize, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
 	{
 		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
-	void Cout::Print(const std::string message, const ConsoleBasic::FONTCOLOR fontColor, const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
+	void Cout::Print(const std::string message, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
 	{
 		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
-	void Cout::Print(const std::wstring message, const ConsoleBasic::FONTCOLOR fontColor, const ConsoleBasic::BACKGROUNDCOLOR backgroundColor)
+	void Cout::Print(const std::wstring message, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
 	{
 		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleBasic::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleBasic::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
+		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
 	Cout & Cout::operator<<(const char s)
@@ -248,6 +242,13 @@ namespace ConsoleObject
 	}
 #pragma endregion
 #pragma region Menu Objects
+	Menu::Menu(const MENUITEM_ORDER displayOrder, const int positionX, const int positionY)
+	{
+		displayOrder_ = displayOrder;
+		positionX_ = positionX;
+		positionY_ = positionY;
+	}
+
 	Menu::~Menu()
 	{
 	}
@@ -268,6 +269,27 @@ namespace ConsoleObject
 		menuItems_[currentItem_].Select(outputHandle);
 	}
 
+	void Menu::InsertItem(const MenuItem item, const int location)
+	{
+	}
+
+	bool Menu::DeleteItem(const int location)
+	{
+		return false;
+	}
+
+	void Menu::HandleKeybInput(const INPUT_RECORD key, const HANDLE outputHandle)
+	{
+	}
+
+	void Menu::HandleMouseInput(const INPUT_RECORD mouseAction, const HANDLE outputHandle)
+	{
+	}
+
+	void Menu::Draw(const HANDLE outputHandle)
+	{
+	}
+
 	MenuItem::MenuItem(std::string description)
 	{
 		description_ = description;
@@ -276,6 +298,26 @@ namespace ConsoleObject
 	MenuItem::~MenuItem()
 	{
 
+	}
+
+	void MenuItem::Click(const HANDLE outputHandle)
+	{
+	}
+
+	void MenuItem::Select(const HANDLE outputHandle)
+	{
+	}
+
+	void MenuItem::Deselect(const HANDLE outputHandle)
+	{
+	}
+
+	void MenuItem::Activate(const HANDLE outputHandle)
+	{
+	}
+
+	void MenuItem::Draw(const HANDLE outputHandle)
+	{
 	}
 
 	std::string MenuItem::GetDescription() const
@@ -303,6 +345,11 @@ namespace ConsoleObject
 		return positionY_;
 	}
 #pragma endregion
+	RadioButtonItem::RadioButtonItem(const std::string description) 
+		: MenuItem(description)
+	{
+	}
+	RadioButtonItem::~RadioButtonItem()
+	{
+	}
 }
-
-#endif // !CONSOLEOBJECTS_CPP

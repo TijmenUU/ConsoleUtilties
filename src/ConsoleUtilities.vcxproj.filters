@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="ConsoleObjects.h">
-      <Filter>Headers</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="ConsoleObjects.cpp">
+    <ClCompile Include="ConsoleFunc.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="ConsoleUtilities.cpp">
+    <ClCompile Include="ConsoleObj.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleObj.h">
+      <Filter>Headers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -23,7 +23,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleUtilities.h">
+    <ClInclude Include="ConsoleFunc.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

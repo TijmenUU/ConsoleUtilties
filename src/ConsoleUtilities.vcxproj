@@ -111,13 +111,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleObjects.h" />
-    <ClCompile Include="ConsoleObjects.cpp" />
+    <ClCompile Include="ConsoleObj.h" />
+    <ClCompile Include="ConsoleObj.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ConsoleUtilities.cpp" />
+    <ClCompile Include="ConsoleFunc.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleUtilities.h" />
+    <ClInclude Include="ConsoleFunc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

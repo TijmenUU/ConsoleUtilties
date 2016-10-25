@@ -1,5 +1,5 @@
-#ifndef CONSOLEOBJECTS_H
-#define CONSOLEOBJECTS_H
+#ifndef CONSOLEOBJ_H
+#define CONSOLEOBJ_H
 #pragma once 
 
 /*
@@ -25,10 +25,10 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "ConsoleUtilities.h"
+#include "ConsoleFunc.h"
 #include <iostream>
 
-namespace ConsoleObject
+namespace ConsoleObj
 {
 #pragma region Cin Cout
 	// Similar to std::cout. It handles all the HANDLE creation
@@ -48,8 +48,8 @@ namespace ConsoleObject
 		// Throws and std::exception if something went wrong
 		~Cout();
 
-		void SetFontColor(ConsoleBasic::FONTCOLOR color);
-		void SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR color);
+		void SetFontColor(ConsoleFunc::FONTCOLOR color);
+		void SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR color);
 
 		// Classical Print behaviour, prints using stored color info
 		void Print(const char* message, const int messageSize);
@@ -70,21 +70,21 @@ namespace ConsoleObject
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const char* message,
 			const int messageSize,
-			const ConsoleBasic::FONTCOLOR fontColor,
-			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+			const ConsoleFunc::FONTCOLOR fontColor,
+			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const wchar_t* message,
 			const int messageSize,
-			const ConsoleBasic::FONTCOLOR fontColor,
-			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+			const ConsoleFunc::FONTCOLOR fontColor,
+			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::string message,
-			const ConsoleBasic::FONTCOLOR fontColor,
-			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+			const ConsoleFunc::FONTCOLOR fontColor,
+			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
 		// Classical Print behaviour, but does not use the stored color settings
 		void Print(const std::wstring message,
-			const ConsoleBasic::FONTCOLOR fontColor,
-			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+			const ConsoleFunc::FONTCOLOR fontColor,
+			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
 
 		// Handle input streams <<
 
@@ -124,8 +124,8 @@ namespace ConsoleObject
 	protected:
 		int positionX_, positionY_;
 		std::string description_;
-		ConsoleBasic::FONTCOLOR fontColor_;
-		ConsoleBasic::BACKGROUNDCOLOR backgroundColor_;
+		ConsoleFunc::FONTCOLOR fontColor_;
+		ConsoleFunc::BACKGROUNDCOLOR backgroundColor_;
 	public:
 		MenuItem(std::string description);
 		~MenuItem();
@@ -170,7 +170,7 @@ namespace ConsoleObject
 	class RadioButtonItem : MenuItem
 	{
 	public:
-		RadioButtonItem();
+		RadioButtonItem(const std::string description);
 		~RadioButtonItem();
 	};
 #pragma endregion
