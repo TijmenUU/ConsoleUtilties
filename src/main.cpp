@@ -29,7 +29,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 int main(int argc, char** argv)
 {
-	/*
 	ConsoleObject::Cout cout;
 	HANDLE inputHandle;
 	DWORD inputConfigBackup;
@@ -49,7 +48,7 @@ int main(int argc, char** argv)
 	cout << input << "\n\n" << "Press any key to exit...";
 
 	ConsoleBasic::GetChar(inputHandle);
-	*/
+
 	return 0;
 }
 

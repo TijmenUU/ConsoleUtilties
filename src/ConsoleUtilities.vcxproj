@@ -114,6 +114,7 @@
     <ClCompile Include="ConsoleObjects.h" />
     <ClCompile Include="ConsoleObjects.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ConsoleUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleUtilities.h" />
