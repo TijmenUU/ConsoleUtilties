@@ -1,5 +1,6 @@
 #ifndef CONSOLEOBJECTS_H
 #define CONSOLEOBJECTS_H
+#pragma once 
 
 /*
 ALPHA V0.3
@@ -24,11 +25,100 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#pragma once
 #include "ConsoleUtilities.h"
+#include <iostream>
 
 namespace ConsoleObject
 {
+#pragma region Cin Cout
+	// Similar to std::cout. It handles all the HANDLE creation
+	// and necessary initializations. After the constructor has
+	// been called it can be used.
+	class Cout
+	{
+	protected:
+		int currentFontColor_;
+		int currentBGColor_;
+		HANDLE screenBuffer_, previousOutputHandle_;
+		CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo_;
+	public:
+		// Throws an std::exception if something went wrong
+		Cout();
+		// Restores the original i/o handles and closes the used ones
+		// Throws and std::exception if something went wrong
+		~Cout();
+
+		void SetFontColor(ConsoleBasic::FONTCOLOR color);
+		void SetBackgroundColor(ConsoleBasic::BACKGROUNDCOLOR color);
+
+		// Classical Print behaviour, prints using stored color info
+		void Print(const char* message, const int messageSize);
+		// Classical Print behaviour, prints using stored color info
+		void Print(const wchar_t* message, const int messageSize);
+		// Classical Print behaviour, prints using stored color info
+		void Print(const std::string message);
+		// Classical Print behaviour, prints using stored color info
+		void Print(const std::wstring message);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const char* message, const int messageSize, DWORD premixedColors);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const wchar_t* message, const int messageSize, DWORD premixedColors);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const std::string message, DWORD premixedColors);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const std::wstring message, DWORD premixedColors);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const char* message,
+			const int messageSize,
+			const ConsoleBasic::FONTCOLOR fontColor,
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const wchar_t* message,
+			const int messageSize,
+			const ConsoleBasic::FONTCOLOR fontColor,
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const std::string message,
+			const ConsoleBasic::FONTCOLOR fontColor,
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+		// Classical Print behaviour, but does not use the stored color settings
+		void Print(const std::wstring message,
+			const ConsoleBasic::FONTCOLOR fontColor,
+			const ConsoleBasic::BACKGROUNDCOLOR backgroundColor);
+
+		// Handle input streams <<
+
+		Cout& operator << (const char s);
+		Cout& operator << (const wchar_t s);
+		Cout& operator << (const char* s);
+		Cout& operator << (const wchar_t* s);
+		Cout& operator << (const std::string &s);
+		Cout& operator << (const std::wstring &s);
+		Cout& operator << (std::istream &in);
+		// TODO differentiate between ascii and unicode strings
+
+		// Getters and setters
+
+		void SetCursorPosition(const int x, const int y);
+		void SetCursorPosition(const COORD position);
+
+		COORD GetCursorPosition() const;
+		void GetCursorPosition(int &x, int &y);
+
+		// Do not use this if you don't know what you're doing
+		HANDLE _GetOutputHandle() const;
+
+		CONSOLE_SCREEN_BUFFER_INFO GetConsoleScreenBufferInfo() const;
+	};
+#pragma endregion
+#pragma region Menu Objects
+	/*
+		These objects are meant to be overridden. Hence it provides no callback construct.
+		If you want your radio button to do something specific, create a new class, inherit
+		from the RadioButtonItem and override to your hearts desire! Or create complete new
+		wacky things by inheriting from MenuItem.
+	*/
+	
 	class MenuItem
 	{
 	protected:
@@ -43,10 +133,8 @@ namespace ConsoleObject
 		virtual void Select(const HANDLE outputHandle); // Hovering over the item
 		virtual void Deselect(const HANDLE outputHandle); // Stop hovering over the item
 		virtual void Activate(const HANDLE outputHandle); // Keyboard or mouse activation on item
-		std::string GetDescription() const
-		{
-			return description_;
-		}
+		virtual void Draw(const HANDLE outputHandle);
+		std::string GetDescription() const;
 		void SetPositionX(const int positionX);
 		void SetPositionY(const int positionY);
 		int GetPositionX() const;
@@ -85,5 +173,6 @@ namespace ConsoleObject
 		RadioButtonItem();
 		~RadioButtonItem();
 	};
+#pragma endregion
 }
 #endif // !CONSOLEOBJECTS_H
