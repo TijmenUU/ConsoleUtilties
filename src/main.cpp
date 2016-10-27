@@ -23,7 +23,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "ConsoleObj.h"
 
-int main(int argc, char** argv)
+void DemonstrateCout()
 {
 	ConsoleObj::Cout cout;
 	HANDLE inputHandle;
@@ -34,17 +34,24 @@ int main(int argc, char** argv)
 	cout.SetFontColor(ConsoleFunc::FONTCOLOR::GREEN);
 	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKBLUE);
 
+	cout << "Give me something to echo: ";
 	std::string input = ConsoleFunc::GetLineVisualized(cout._GetOutputHandle(),
-	inputHandle,
-	cout.GetConsoleScreenBufferInfo());
+		inputHandle,
+		cout.GetConsoleScreenBufferInfo());
 	cout.UpdateCursor(); // Since Get Line Visualized prints our keystrokes we need to do this
+	cout << "\nYou wrote: "; // Goto next line
 
-	cout.SetFontColor(ConsoleFunc::FONTCOLOR::RED);
-	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKYELLOW);
+	cout.SetFontColor(ConsoleFunc::FONTCOLOR::YELLOW);
+	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKGREEN);
 
-	cout << input << "\n\n" << "Press any key to exit...";
+	cout << input << "\n\n" << "Press any key to continue...";
 
 	ConsoleFunc::GetChar(inputHandle);
+}
+
+int main(int argc, char** argv)
+{
+	DemonstrateCout();
 
 	return 0;
 }

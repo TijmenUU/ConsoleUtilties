@@ -71,6 +71,7 @@ namespace ConsoleObj
 		currentBGColor_ = static_cast<int>(color);
 	}
 
+#pragma region Print
 	void Cout::Print(const char * message, const int messageSize)
 	{
 		assert(messageSize > 0);
@@ -162,12 +163,14 @@ namespace ConsoleObj
 		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
 		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
+#pragma endregion
 
 	void Cout::UpdateCursor()
 	{
 		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
+#pragma region <<
 	Cout & Cout::operator<<(const char s)
 	{
 		Print(&s, 1);
@@ -209,7 +212,7 @@ namespace ConsoleObj
 		Print(std::string(std::istreambuf_iterator<char>(in), {}));
 		return *this;
 	}
-
+#pragma endregion
 	void Cout::SetCursorPosition(const int x, const int y)
 	{
 		assert(x > 0 && y > 0 && x <= screenBufferInfo_.dwSize.X && y <= screenBufferInfo_.dwSize.Y);

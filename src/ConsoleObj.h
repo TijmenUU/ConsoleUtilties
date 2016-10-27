@@ -27,6 +27,9 @@
 
 #include "ConsoleFunc.h"
 #include <iostream>
+#include <cassert>
+#include <vector>
+#include <Windows.h>
 
 namespace ConsoleObj
 {

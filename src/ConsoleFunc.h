@@ -249,14 +249,14 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 ascii values to the string
-	 std::string GetLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
+	std::string GetLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
 
 	// Returns an ascii encoded string
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 ascii values to the string
-	 std::string GetLine(const HANDLE inputBuffer,
+	std::string GetLine(const HANDLE inputBuffer,
 		INPUT_RECORD *inputs,
 		const int inputsLength,
 		char delimiter = 13,
@@ -267,14 +267,14 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 unicode values to the string
-	 std::wstring GetWLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
+	std::wstring GetWLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
 
 	// Returns an unicode encoded string
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 unicode values to the string
-	 std::wstring GetWLine(const HANDLE inputBuffer,
+	std::wstring GetWLine(const HANDLE inputBuffer,
 		INPUT_RECORD *inputs,
 		const int inputsLength,
 		char delimiter = 13,
@@ -285,7 +285,8 @@ namespace ConsoleFunc
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
-	 std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
+	// Does NOT print the delimiter!
+	std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
 		const HANDLE consoleInputBuffer,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		char delimiter = 13,
@@ -295,7 +296,8 @@ namespace ConsoleFunc
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
-	 std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
+	// Does NOT print the delimiter!
+	std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
 		const HANDLE consoleInputBuffer,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		INPUT_RECORD *inputBuffer,
@@ -307,7 +309,8 @@ namespace ConsoleFunc
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
-	 std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
+	// Does NOT print the delimiter!
+	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
 		const HANDLE consoleInputBuffer,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		char delimiter = 13,
@@ -317,7 +320,8 @@ namespace ConsoleFunc
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
-	 std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
+	// Does NOT print the delimiter!
+	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
 		const HANDLE consoleInputBuffer,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		INPUT_RECORD *inputBuffer,

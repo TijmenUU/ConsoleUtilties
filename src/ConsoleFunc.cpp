@@ -617,7 +617,9 @@ namespace ConsoleFunc
 				{
 					char code = inputs[i].Event.KeyEvent.uChar.AsciiChar;
 					if (code == delimiter)
+					{
 						return outputString;
+					}	
 					if (code == 8) // backspace in ASCII
 					{
 						if (outputString.size() != 0)
