@@ -19,10 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A962B5F7-3FE1-44A6-BAE4-40FE3EEF54D7}</ProjectGuid>
-    <RootNamespace>ConsoleHeader_Applied</RootNamespace>
+    <ProjectGuid>{C5242138-BD23-46A2-A372-C68FC96EEE53}</ProjectGuid>
+    <RootNamespace>ConsoleUtilities</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>ConsoleUtilities</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,7 +68,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <SourcePath>$(ProjectDir)src;$(SourcePath)</SourcePath>
+    <IncludePath>$(ProjectDir)src;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -111,13 +113,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleObj.h" />
-    <ClCompile Include="ConsoleObj.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="ConsoleFunc.cpp" />
+    <ClCompile Include="src\ConsoleFunc.cpp" />
+    <ClCompile Include="src\ConsoleObj.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleFunc.h" />
+    <ClInclude Include="src\ConsoleFunc.h" />
+    <ClInclude Include="src\ConsoleObj.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
