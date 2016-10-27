@@ -55,39 +55,21 @@ namespace ConsoleObj
 		void SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR color);
 
 		// Classical Print behaviour, prints using stored color info
-		void Print(const char* message, const int messageSize);
+		void Print(const char * message, const int messageSize);
 		// Classical Print behaviour, prints using stored color info
-		void Print(const wchar_t* message, const int messageSize);
+		void Print(const wchar_t * message, const int messageSize);
 		// Classical Print behaviour, prints using stored color info
 		void Print(const std::string message);
 		// Classical Print behaviour, prints using stored color info
 		void Print(const std::wstring message);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const char* message, const int messageSize, DWORD premixedColors);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const wchar_t* message, const int messageSize, DWORD premixedColors);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::string message, DWORD premixedColors);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::wstring message, DWORD premixedColors);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const char* message,
-			const int messageSize,
-			const ConsoleFunc::FONTCOLOR fontColor,
-			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const wchar_t* message,
-			const int messageSize,
-			const ConsoleFunc::FONTCOLOR fontColor,
-			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::string message,
-			const ConsoleFunc::FONTCOLOR fontColor,
-			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
-		// Classical Print behaviour, but does not use the stored color settings
-		void Print(const std::wstring message,
-			const ConsoleFunc::FONTCOLOR fontColor,
-			const ConsoleFunc::BACKGROUNDCOLOR backgroundColor);
+		// Classical Print behaviour at a custom location. Does not affect the cursor position!
+		void Print(const char * message, const int messageSize, const COORD printingLocation);
+		// Classical Print behaviour at a custom location. Does not affect the cursor position!
+		void Print(const wchar_t * message, const int messageSize, const COORD printingLocation);
+		// Classical Print behaviour at a custom location. Does not affect the cursor position!
+		void Print(const std::string message, const COORD printingLocation);
+		// Classical Print behaviour at a custom location. Does not affect the cursor position!
+		void Print(const std::wstring message, const COORD printingLocation);
 		
 		// Use this to update the cursor of COUT after you have done printing
 		// without using this Object (instance)
@@ -97,7 +79,7 @@ namespace ConsoleObj
 
 		Cout& operator << (const char s);
 		Cout& operator << (const wchar_t s);
-		Cout& operator << (const char* s);
+		Cout& operator << (const char * s);
 		Cout& operator << (const wchar_t* s);
 		Cout& operator << (const std::string &s);
 		Cout& operator << (const std::wstring &s);

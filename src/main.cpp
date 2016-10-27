@@ -21,6 +21,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#include <conio.h>
 #include "ConsoleObj.h"
 
 void DemonstrateCout()
@@ -33,6 +34,11 @@ void DemonstrateCout()
 
 	cout.SetFontColor(ConsoleFunc::FONTCOLOR::GREEN);
 	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKBLUE);
+
+	COORD oddCoordinate;
+		oddCoordinate.X = 50;
+		oddCoordinate.Y = 10;
+	cout.Print("Odd printing location", oddCoordinate); // You can print things in odd places
 
 	cout << "Give me something to echo: ";
 	std::string input = ConsoleFunc::GetLineVisualized(cout._GetOutputHandle(),
@@ -47,11 +53,15 @@ void DemonstrateCout()
 	cout << input << "\n\n" << "Press any key to continue...";
 
 	ConsoleFunc::GetChar(inputHandle);
+	ConsoleFunc::DeleteInputHandle(inputHandle, inputConfigBackup); // Restore input so that you can use std::cin again
 }
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
 	DemonstrateCout();
+
+	std::cout << "And all was normal again. Press any key to exit...";
+	_getch();
 
 	return 0;
 }
