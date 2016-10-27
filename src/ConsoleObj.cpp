@@ -104,64 +104,32 @@ namespace ConsoleObj
 		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
 	}
 
-	void Cout::Print(const char * message, const int messageSize, DWORD premixedColors)
+	void Cout::Print(const char * message, const int messageSize, const COORD printingLocation)
 	{
 		assert(messageSize > 0);
 
-		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, printingLocation);
 	}
 
-	void Cout::Print(const wchar_t * message, const int messageSize, DWORD premixedColors)
+	void Cout::Print(const wchar_t * message, const int messageSize, const COORD printingLocation)
 	{
 		assert(messageSize > 0);
 
-		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, printingLocation);
 	}
 
-	void Cout::Print(const std::string message, DWORD premixedColors)
+	void Cout::Print(const std::string message, const COORD printingLocation)
 	{
-		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, printingLocation);
 	}
 
-	void Cout::Print(const std::wstring message, DWORD premixedColors)
+	void Cout::Print(const std::wstring message, const COORD printingLocation)
 	{
-		SetConsoleTextAttribute(screenBuffer_, premixedColors);
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
-	}
-
-	void Cout::Print(const char * message, const int messageSize, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
-	{
-		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
-	}
-
-	void Cout::Print(const wchar_t * message, const int messageSize, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
-	{
-		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, messageSize, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
-	}
-
-	void Cout::Print(const std::string message, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
-	{
-		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
-	}
-
-	void Cout::Print(const std::wstring message, const ConsoleFunc::FONTCOLOR fontColor, const ConsoleFunc::BACKGROUNDCOLOR backgroundColor)
-	{
-		SetConsoleTextAttribute(screenBuffer_, (static_cast<int>(fontColor) | static_cast<int>(backgroundColor)));
-		ConsoleFunc::WriteToConsole(screenBuffer_, message, screenBufferInfo_.dwCursorPosition);
-		ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_);
+		SetConsoleTextAttribute(screenBuffer_, currentFontColor_ | currentBGColor_);
+		ConsoleFunc::WriteToConsole(screenBuffer_, message, printingLocation);
 	}
 #pragma endregion
 
@@ -353,7 +321,7 @@ namespace ConsoleObj
 		return positionY_;
 	}
 #pragma endregion
-	RadioButtonItem::RadioButtonItem(const std::string description) 
+	RadioButtonItem::RadioButtonItem(const std::string description)
 		: MenuItem(description)
 	{
 	}
