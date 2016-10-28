@@ -372,6 +372,9 @@ namespace ConsoleFunc
 		YELLOW = 0xE0,
 		WHITE = 0xF0
 	};
+
+	unsigned int CreateColorAttributes(FONTCOLOR fontColor, BACKGROUNDCOLOR bgColor);
+
 }
 #endif // !CONSOLEFUNC_H
  

@@ -846,4 +846,9 @@ namespace ConsoleFunc
 		return SetConsoleMode(inputBuffer, previousInputBufferConfig);
 	}
 
+	unsigned int CreateColorAttributes(FONTCOLOR fontColor, BACKGROUNDCOLOR bgColor)
+	{
+		return static_cast<unsigned int>(fontColor) | static_cast<unsigned int>(bgColor);
+	}
+
 }
