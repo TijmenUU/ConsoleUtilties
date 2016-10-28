@@ -851,4 +851,34 @@ namespace ConsoleFunc
 		return static_cast<unsigned int>(fontColor) | static_cast<unsigned int>(bgColor);
 	}
 
+	bool HideConsoleCursor(HANDLE consoleScreenBuffer)
+	{
+		CONSOLE_CURSOR_INFO cursorInfo;
+		if (GetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+		{
+			cursorInfo.bVisible = false;
+			if (SetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool ShowConsoleCursor(HANDLE consoleScreenBuffer)
+	{
+		CONSOLE_CURSOR_INFO cursorInfo;
+		if (GetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+		{
+			cursorInfo.bVisible = true;
+			if (SetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }

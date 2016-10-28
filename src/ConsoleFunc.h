@@ -191,6 +191,7 @@ namespace ConsoleFunc
 	// Gets the specified number of events from the buffer
 	// and stores them in the given INPUT_RECORD array
 	// Interesting event types are KEY_EVENT, MOUSE_EVENT and WINDOW_BUFFER_SIZE_EVENT
+	// This method is blocking
 	// Returns if it was succesful
 	bool GetInput(const HANDLE & consoleInputBuffer,
 		INPUT_RECORD * outputBuffer,
@@ -199,6 +200,7 @@ namespace ConsoleFunc
 
 	// Gets the first 128 events from the buffer (doesn't clear the output vectors!)
 	// and stores them in the given vectors
+	// This method is blocking
 	// Returns if it was succesful
 	bool GetInput(const HANDLE & consoleInputBuffer,
 		std::vector<KEY_EVENT_RECORD> & keyboardEvents,
@@ -243,6 +245,8 @@ namespace ConsoleFunc
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
+
+	// TODO add async keyget / non blocking method
 
 	// Returns an ascii encoded string
 	// default value 13 is enter, sleepduration is in ms
@@ -374,6 +378,10 @@ namespace ConsoleFunc
 	};
 
 	unsigned int CreateColorAttributes(FONTCOLOR fontColor, BACKGROUNDCOLOR bgColor);
+
+	bool HideConsoleCursor(HANDLE consoleScreenBuffer);
+
+	bool ShowConsoleCursor(HANDLE consoleScreenBuffer);
 
 }
 #endif // !CONSOLEFUNC_H
