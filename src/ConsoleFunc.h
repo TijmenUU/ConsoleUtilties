@@ -81,30 +81,30 @@ namespace ConsoleFunc
 	// Returns if succesfull
 	bool GetWindowHandle(HWND & windowHandle);
 
-	// Stores the current input configuration in previousInputBufferConfig
-	// and stores the current input handle to consoleInputBuffer with mouse and window inputs
-	// You do not have to initialize the consoleInputBuffer handle
+	// Stores the current input configuration in previousConsoleInputConfig
+	// and stores the current input handle to consoleInput with mouse and window inputs
+	// You do not have to initialize the consoleInput handle
 	// Returns if succesful
-	bool EnableConsoleInput(HANDLE & consoleInputBuffer, DWORD & previousInputBufferConfig);
+	bool EnableConsoleInput(HANDLE & consoleInput, DWORD & previousConsoleInputConfig);
 
 	// Handle parameter will contain the new handle
 	// Returns if succesfull
-	bool InitConsole(HANDLE & consoleScreenBuffer);
+	bool InitConsole(HANDLE & consoleScreen);
 
 	// Sets the console screenbuffer to the given handle, returns if succesful
-	bool SetScreenBuffer(const HANDLE & consoleScreenBuffer);
+	bool SetScreenBuffer(const HANDLE & consoleScreen);
 
 	// Stores the window data in the second parameter, returns if succesful
-	bool GetConsoleInfo(const HANDLE & consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
+	bool GetConsoleInfo(const HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
 
 	// Combines the init, setting screen buffer and fetching console buffer info
 	// Returns if succesful
-	bool SetupConsole(HANDLE & consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
+	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
 
 #pragma region Console Input
 	// Reads what is displayed on screen on a given location, 
 	// Returns if succesful, if reading out of bounds it returns false as well
-	bool GetCharFromConsole(const HANDLE & consoleScreenBuffer,
+	bool GetCharFromConsole(const HANDLE & consoleScreen,
 		const COORD location,
 		CHAR_INFO & outputBuffer);
 
@@ -112,7 +112,7 @@ namespace ConsoleFunc
 	// If you give it an area (partially) outside of bounds the readArea will contain the actual read area
 	// Returns false if the read area is completely out of bounds
 	// Returns if succesful
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer,
+	bool GetRectFromConsole(const HANDLE & consoleScreen,
 		SMALL_RECT & readArea,
 		CHAR_INFO ** outputBuffer);
 
@@ -120,7 +120,7 @@ namespace ConsoleFunc
 	// Returns false if area is completely out of bounds
 	// The delimiter tells you when the next row starts, last row does not have a trailing delimiter
 	// Returns if succesful
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer,
+	bool GetRectFromConsole(const HANDLE & consoleScreen,
 		const int positionX,
 		const int positionY,
 		const int width,
@@ -132,7 +132,7 @@ namespace ConsoleFunc
 	// If you give it an area (partially) outside of bounds the behaviour is undefined
 	// The delimiter tells you when the next row starts, last row does not have a trailing delimiter
 	// Returns if succesful
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer,
+	bool GetRectFromConsole(const HANDLE & consoleScreen,
 		const int positionX,
 		const int positionY,
 		const int width,
@@ -143,47 +143,47 @@ namespace ConsoleFunc
 #pragma region Console Output
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const char * string,
 		const int stringSize);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const wchar_t * string,
 		const int stringSize);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::string string);
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::string string);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Return value is always true
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::wstring string);
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::wstring string);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const char * string,
 		const int stringSize,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const wchar_t * string,
 		const int stringSize,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const std::string string,
 		const COORD position);
 
 	// Prints to a given location. Won't check if the string fits or not
 	// Returns if succesful
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer,
+	bool WriteToConsole(const HANDLE & consoleScreen,
 		const std::wstring string,
 		const COORD position);
 #pragma endregion
@@ -193,29 +193,20 @@ namespace ConsoleFunc
 	// Interesting event types are KEY_EVENT, MOUSE_EVENT and WINDOW_BUFFER_SIZE_EVENT
 	// This method is blocking
 	// Returns if it was succesful
-	bool GetInput(const HANDLE & consoleInputBuffer,
+	bool GetInput(const HANDLE & consoleInput,
 		INPUT_RECORD * outputBuffer,
 		int outputBufferSize,
 		unsigned int & itemsRead);
 
-	// Gets the first 128 events from the buffer (doesn't clear the output vectors!)
-	// and stores them in the given vectors
+	// Returns the first key down
+	// Sleepduration is in ms
 	// This method is blocking
-	// Returns if it was succesful
-	bool GetInput(const HANDLE & consoleInputBuffer,
-		std::vector<KEY_EVENT_RECORD> & keyboardEvents,
-		std::vector<MOUSE_EVENT_RECORD> & mouseEvents,
-		std::vector<WINDOW_BUFFER_SIZE_RECORD> & windowResizeEvents);
+	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInput, DWORD sleepduration = 5);
 
 	// Returns the first key down
 	// Sleepduration is in ms
 	// This method is blocking
-	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
-
-	// Returns the first key down
-	// Sleepduration is in ms
-	// This method is blocking
-	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInputBuffer,
+	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInput,
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
@@ -223,12 +214,12 @@ namespace ConsoleFunc
 	// Returns the first key down, similar to GETCH, ascii encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	char GetChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
+	char GetChar(const HANDLE consoleInput, DWORD sleepduration = 5);
 
 	// Returns the first key down, similar to GETCH, ascii encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	char GetChar(const HANDLE consoleInputBuffer,
+	char GetChar(const HANDLE consoleInput,
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
@@ -236,15 +227,24 @@ namespace ConsoleFunc
 	// Returns the first key down, similar to GETCH, unicode encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	wchar_t GetWChar(const HANDLE consoleInputBuffer, DWORD sleepduration = 5);
+	wchar_t GetWChar(const HANDLE consoleInput, DWORD sleepduration = 5);
 
 	// Returns the first key down, similar to GETCH, unicode encoding
 	// Sleepduration is in ms
 	// This method is blocking
-	wchar_t GetWChar(const HANDLE consoleInputBuffer,
+	wchar_t GetWChar(const HANDLE consoleInput,
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
 		DWORD sleepduration = 5);
+
+	// Useful WINAPI method:
+	// FlushConsoleInputBuffer
+	// This discards all pending inputs, noice!
+	// Example: when you mix getch/ getLine with GetAsyncKeyState, call this before getch / getline
+
+	// Blocking
+	// Flushes input buffer before polling for key presses
+	void WaitOnKey(const HANDLE consoleInput, DWORD sleepDuration = 5);
 
 	// TODO add async keyget / non blocking method
 
@@ -253,15 +253,15 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 ascii values to the string
-	std::string GetLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
+	std::string GetLine(const HANDLE consoleInput, char delimiter = 13, DWORD sleepduration = 5);
 
 	// Returns an ascii encoded string
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 ascii values to the string
-	std::string GetLine(const HANDLE inputBuffer,
-		INPUT_RECORD * inputs,
+	std::string GetLine(const HANDLE consoleInput,
+		INPUT_RECORD * inputBuffer,
 		const int inputsLength,
 		char delimiter = 13,
 		DWORD sleepduration = 5);
@@ -271,27 +271,26 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 unicode values to the string
-	std::wstring GetWLine(const HANDLE inputBuffer, char delimiter = 13, DWORD sleepduration = 5);
+	std::wstring GetWLine(const HANDLE consoleInput, char delimiter = 13, DWORD sleepduration = 5);
 
 	// Returns an unicode encoded string
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does not add the first 31 unicode values to the string
-	std::wstring GetWLine(const HANDLE inputBuffer,
-		INPUT_RECORD * inputs,
+	std::wstring GetWLine(const HANDLE consoleInput,
+		INPUT_RECORD * inputBuffer,
 		const int inputsLength,
 		char delimiter = 13,
 		DWORD sleepduration = 5);
-
 
 	// Returns an ascii encoded string, visualizes the typing process
 	// default value 13 is enter, sleepduration is in ms
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does NOT print the delimiter!
-	std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
-		const HANDLE consoleInputBuffer,
+	std::string GetLineVisualized(const HANDLE consoleScreen,
+		const HANDLE consoleInput,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		char delimiter = 13,
 		DWORD sleepduration = 5);
@@ -301,8 +300,8 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does NOT print the delimiter!
-	std::string GetLineVisualized(const HANDLE consoleScreenBuffer,
-		const HANDLE consoleInputBuffer,
+	std::string GetLineVisualized(const HANDLE consoleScreen,
+		const HANDLE consoleInput,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
@@ -314,8 +313,8 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does NOT print the delimiter!
-	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
-		const HANDLE consoleInputBuffer,
+	std::wstring GetWLineVisualized(const HANDLE consoleScreen,
+		const HANDLE consoleInput,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		char delimiter = 13,
 		DWORD sleepduration = 5);
@@ -325,8 +324,8 @@ namespace ConsoleFunc
 	// This method is blocking
 	// Can be empty if the first keypress is the delimiter
 	// Does NOT print the delimiter!
-	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer,
-		const HANDLE consoleInputBuffer,
+	std::wstring GetWLineVisualized(const HANDLE consoleScreen,
+		const HANDLE consoleInput,
 		const CONSOLE_SCREEN_BUFFER_INFO consoleInfo,
 		INPUT_RECORD * inputBuffer,
 		const int inputBufferLength,
@@ -337,7 +336,7 @@ namespace ConsoleFunc
 
 	// Closes the output handle and restores the input handle created by the console
 	// Returns if succesfull
-	bool DeleteInputHandle(HANDLE &inputBuffer, DWORD previousInputBufferConfig);
+	bool DeleteInputHandle(HANDLE & consoleInput, DWORD previousConsoleInputConfig);
 
 	enum class FONTCOLOR {
 		BLACK = 0x00,
@@ -379,9 +378,9 @@ namespace ConsoleFunc
 
 	unsigned int CreateColorAttributes(FONTCOLOR fontColor, BACKGROUNDCOLOR bgColor);
 
-	bool HideConsoleCursor(HANDLE consoleScreenBuffer);
+	bool HideConsoleCursor(HANDLE consoleScreen);
 
-	bool ShowConsoleCursor(HANDLE consoleScreenBuffer);
+	bool ShowConsoleCursor(HANDLE consoleScreen);
 
 }
 #endif // !CONSOLEFUNC_H

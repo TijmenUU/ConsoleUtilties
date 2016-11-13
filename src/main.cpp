@@ -22,6 +22,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <conio.h>
+#include "Breakout.h"
 #include "ConsoleObj.h"
 
 void DemonstrateCout()
@@ -52,13 +53,30 @@ void DemonstrateCout()
 
 	cout << input << "\n\n" << "Press any key to continue...";
 
-	ConsoleFunc::GetChar(inputHandle);
+	ConsoleFunc::WaitOnKey(inputHandle);
 	ConsoleFunc::DeleteInputHandle(inputHandle, inputConfigBackup); // Restore input so that you can use std::cin again
+}
+
+void PlayBreakOut()
+{
+	if (BreakOutGame::Setup())
+	{
+		BreakOutGame::Loop();
+		if (!BreakOutGame::Exit())
+		{
+			std::cerr << "Something went wrong in BreakOutGame::Exit()\n";
+		}
+	}
+	else
+	{
+		std::cerr << "Something went wrong in BreakOutGame::Setup()\n";
+	}
 }
 
 int main(int argc, char ** argv)
 {
 	DemonstrateCout();
+	PlayBreakOut();
 
 	std::cout << "And all was normal again. Press any key to exit...";
 	_getch();

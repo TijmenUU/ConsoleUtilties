@@ -139,42 +139,42 @@ namespace ConsoleFunc
 		return windowHandle != nullptr;
 	}
 
-	bool EnableConsoleInput(HANDLE & consoleInputBuffer, DWORD & previousInputBufferConfig)
+	bool EnableConsoleInput(HANDLE & consoleInput, DWORD & previousInputBufferConfig)
 	{
-		consoleInputBuffer = GetStdHandle(STD_INPUT_HANDLE);
-		GetConsoleMode(consoleInputBuffer, &previousInputBufferConfig);
-		return SetConsoleMode(consoleInputBuffer, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+		consoleInput = GetStdHandle(STD_INPUT_HANDLE);
+		GetConsoleMode(consoleInput, &previousInputBufferConfig);
+		return SetConsoleMode(consoleInput, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 	}
 
-	bool InitConsole(HANDLE & consoleScreenBuffer)
+	bool InitConsole(HANDLE & consoleScreen)
 	{
-		consoleScreenBuffer = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, 0, CONSOLE_TEXTMODE_BUFFER, 0);
-		if (consoleScreenBuffer == INVALID_HANDLE_VALUE)
+		consoleScreen = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, 0, CONSOLE_TEXTMODE_BUFFER, 0);
+		if (consoleScreen == INVALID_HANDLE_VALUE)
 		{
 			return false;
 		}
-		return SetConsoleActiveScreenBuffer(consoleScreenBuffer);
+		return SetConsoleActiveScreenBuffer(consoleScreen);
 	}
 
-	bool SetScreenBuffer(const HANDLE & consoleScreenBuffer)
+	bool SetScreenBuffer(const HANDLE & consoleScreen)
 	{
-		return SetConsoleActiveScreenBuffer(consoleScreenBuffer);
+		return SetConsoleActiveScreenBuffer(consoleScreen);
 	}
 
-	bool GetConsoleInfo(const HANDLE & consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo)
+	bool GetConsoleInfo(const HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo)
 	{
-		return GetConsoleScreenBufferInfo(consoleScreenBuffer, &consoleInfo);
+		return GetConsoleScreenBufferInfo(consoleScreen, &consoleInfo);
 	}
 
-	bool SetupConsole(HANDLE & consoleScreenBuffer, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo)
+	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo)
 	{
-		if (InitConsole(consoleScreenBuffer) && SetScreenBuffer(consoleScreenBuffer) && GetConsoleInfo(consoleScreenBuffer, consoleInfo))
+		if (InitConsole(consoleScreen) && SetScreenBuffer(consoleScreen) && GetConsoleInfo(consoleScreen, consoleInfo))
 			return true;
 		else
 			return false;
 	}
 
-	bool GetCharFromConsole(const HANDLE & consoleScreenBuffer, const COORD location, CHAR_INFO & outputBuffer)
+	bool GetCharFromConsole(const HANDLE & consoleScreen, const COORD location, CHAR_INFO & outputBuffer)
 	{
 		assert(location.X >= 0 && location.Y >= 0);
 
@@ -187,20 +187,20 @@ namespace ConsoleFunc
 		readRegion.Right = location.X + 1;
 		readRegion.Bottom = location.Y + 1;
 
-		return ReadConsoleOutput(consoleScreenBuffer, &outputBuffer, kAreaSize, kZeroCoord, &readRegion) && !(readRegion.Left > readRegion.Right || readRegion.Bottom < readRegion.Top);
+		return ReadConsoleOutput(consoleScreen, &outputBuffer, kAreaSize, kZeroCoord, &readRegion) && !(readRegion.Left > readRegion.Right || readRegion.Bottom < readRegion.Top);
 	}
 
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer, SMALL_RECT & readArea, CHAR_INFO ** outputBuffer)
+	bool GetRectFromConsole(const HANDLE & consoleScreen, SMALL_RECT & readArea, CHAR_INFO ** outputBuffer)
 	{
 		assert(readArea.Bottom > readArea.Top && readArea.Right > readArea.Left);
 
 		static const COORD kZeroCoord = { 0, 0 };
 		COORD areaSize = { readArea.Right - readArea.Left, readArea.Bottom - readArea.Top }; // {width, height}
 
-		return ReadConsoleOutput(consoleScreenBuffer, *outputBuffer, areaSize, kZeroCoord, &readArea) && !(readArea.Left > readArea.Right || readArea.Bottom < readArea.Top);
+		return ReadConsoleOutput(consoleScreen, *outputBuffer, areaSize, kZeroCoord, &readArea) && !(readArea.Left > readArea.Right || readArea.Bottom < readArea.Top);
 	}
 
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer, const int positionX, const int positionY, const int width, const int height, std::string & outputBuffer, char delimiter)
+	bool GetRectFromConsole(const HANDLE & consoleScreen, const int positionX, const int positionY, const int width, const int height, std::string & outputBuffer, char delimiter)
 	{
 		assert(width > 0 && height > 0); // Technically the position can be anywhere
 
@@ -216,7 +216,7 @@ namespace ConsoleFunc
 			intermediateBuffer[i] = new CHAR_INFO[height];
 		}
 
-		if (!GetRectFromConsole(consoleScreenBuffer, readArea, intermediateBuffer))
+		if (!GetRectFromConsole(consoleScreen, readArea, intermediateBuffer))
 			return false;
 
 		int actualWidth = readArea.Right - readArea.Left;
@@ -242,7 +242,7 @@ namespace ConsoleFunc
 		return true;
 	}
 
-	bool GetRectFromConsole(const HANDLE & consoleScreenBuffer, const int positionX, const int positionY, const int width, const int height, std::wstring & outputBuffer, wchar_t delimiter)
+	bool GetRectFromConsole(const HANDLE & consoleScreen, const int positionX, const int positionY, const int width, const int height, std::wstring & outputBuffer, wchar_t delimiter)
 	{
 		assert(height > 0 && width > 0);
 
@@ -258,7 +258,7 @@ namespace ConsoleFunc
 			intermediateBuffer[i] = new CHAR_INFO[height];
 		}
 
-		bool result = GetRectFromConsole(consoleScreenBuffer, readArea, intermediateBuffer);
+		bool result = GetRectFromConsole(consoleScreen, readArea, intermediateBuffer);
 		if (!result)
 			return false;
 
@@ -285,84 +285,84 @@ namespace ConsoleFunc
 		return true;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const char * string, const int stringSize)
+	bool WriteToConsole(const HANDLE & consoleScreen, const char * string, const int stringSize)
 	{
 		assert(stringSize > 0);
 
-		WriteConsole(consoleScreenBuffer, string, stringSize, 0, 0);
+		WriteConsole(consoleScreen, string, stringSize, 0, 0);
 		return true;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const wchar_t * string, const int stringSize)
+	bool WriteToConsole(const HANDLE & consoleScreen, const wchar_t * string, const int stringSize)
 	{
 		assert(stringSize > 0);
 
-		WriteConsole(consoleScreenBuffer, string, stringSize, 0, 0);
+		WriteConsole(consoleScreen, string, stringSize, 0, 0);
 		return true;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::string string)
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::string string)
 	{
-		WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
+		WriteConsole(consoleScreen, string.c_str(), string.size(), 0, 0);
 		return true;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::wstring string)
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::wstring string)
 	{
-		WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
+		WriteConsole(consoleScreen, string.c_str(), string.size(), 0, 0);
 		return true;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const char * string, const int stringSize, const COORD position)
+	bool WriteToConsole(const HANDLE & consoleScreen, const char * string, const int stringSize, const COORD position)
 	{
 		assert(stringSize > 0);
 
-		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
+		if (SetConsoleCursorPosition(consoleScreen, position))
 		{
-			WriteConsole(consoleScreenBuffer, string, stringSize, 0, 0);
+			WriteConsole(consoleScreen, string, stringSize, 0, 0);
 			return true;
 		}
 		return false;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const wchar_t * string, const int stringSize, const COORD position)
+	bool WriteToConsole(const HANDLE & consoleScreen, const wchar_t * string, const int stringSize, const COORD position)
 	{
 		assert(stringSize > 0);
 
-		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
+		if (SetConsoleCursorPosition(consoleScreen, position))
 		{
-			WriteConsole(consoleScreenBuffer, string, stringSize, 0, 0);
+			WriteConsole(consoleScreen, string, stringSize, 0, 0);
 			return true;
 		}
 		return false;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::string string, const COORD position)
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::string string, const COORD position)
 	{
-		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
+		if (SetConsoleCursorPosition(consoleScreen, position))
 		{
-			WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
+			WriteConsole(consoleScreen, string.c_str(), string.size(), 0, 0);
 			return true;
 		}
 		return false;
 	}
 
-	bool WriteToConsole(const HANDLE & consoleScreenBuffer, const std::wstring string, const COORD position)
+	bool WriteToConsole(const HANDLE & consoleScreen, const std::wstring string, const COORD position)
 	{
-		if (SetConsoleCursorPosition(consoleScreenBuffer, position))
+		if (SetConsoleCursorPosition(consoleScreen, position))
 		{
-			WriteConsole(consoleScreenBuffer, string.c_str(), string.size(), 0, 0);
+			WriteConsole(consoleScreen, string.c_str(), string.size(), 0, 0);
 			return true;
 		}
 		return false;
 	}
 
-	bool GetInput(const HANDLE & consoleInputBuffer, INPUT_RECORD * outputBuffer, int outputBufferSize, unsigned int & itemsRead)
+	bool GetInput(const HANDLE & consoleInput, INPUT_RECORD * outputBuffer, int outputBufferSize, unsigned int & itemsRead)
 	{
 		assert(outputBuffer > 0);
 
 		DWORD readItems = 0;
-		if (ReadConsoleInput(consoleInputBuffer, outputBuffer, outputBufferSize, &readItems))
+		if (ReadConsoleInput(consoleInput, outputBuffer, outputBufferSize, &readItems))
 		{
 			itemsRead = readItems;
 			return true;
@@ -373,55 +373,13 @@ namespace ConsoleFunc
 		}
 	}
 
-	bool GetInput(const HANDLE & consoleInputBuffer, std::vector<KEY_EVENT_RECORD>& keyboardEvents, std::vector<MOUSE_EVENT_RECORD>& mouseEvents, std::vector<WINDOW_BUFFER_SIZE_RECORD>& windowResizeEvents)
-	{
-		INPUT_RECORD inputDataBuffer[128];
-		unsigned int itemsRead = 0;
-		if (GetInput(consoleInputBuffer, &inputDataBuffer[0], 128, itemsRead))
-		{
-			for (unsigned int i = 0; i < itemsRead; ++i)
-			{
-				switch (inputDataBuffer[i].EventType)
-				{
-				case KEY_EVENT: // keyboard input 
-				{
-					keyboardEvents.push_back(inputDataBuffer[i].Event.KeyEvent);
-					break;
-				}
-				case MOUSE_EVENT: // mouse input 
-				{
-					mouseEvents.push_back(inputDataBuffer[i].Event.MouseEvent);
-					break;
-				}
-				case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing 
-				{
-					windowResizeEvents.push_back(inputDataBuffer[i].Event.WindowBufferSizeEvent);
-					break;
-				}
-
-				case FOCUS_EVENT:  // disregard focus events 
-				case MENU_EVENT:   // disregard menu events 
-				default:
-				{
-					break;
-				}
-				}
-			}
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInputBuffer, DWORD sleepduration)
+	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInput, DWORD sleepduration)
 	{
 		INPUT_RECORD inputs[8];
 		while (true)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputs[0], 8, itemsRead);
+			GetInput(consoleInput, &inputs[0], 8, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				if (inputs[i].EventType == KEY_EVENT)
@@ -433,12 +391,12 @@ namespace ConsoleFunc
 		}
 	}
 
-	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInputBuffer, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
+	KEY_EVENT_RECORD GetKeyEvent(const HANDLE consoleInput, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
 	{
 		while (true)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputBuffer[0], inputBufferLength, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], inputBufferLength, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				if (inputBuffer[i].EventType == KEY_EVENT)
@@ -450,39 +408,76 @@ namespace ConsoleFunc
 		}
 	}
 
-	char GetChar(const HANDLE consoleInputBuffer, DWORD sleepduration)
+	char GetChar(const HANDLE consoleInput, DWORD sleepduration)
 	{
-		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInputBuffer, sleepduration);
+		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInput, sleepduration);
 		return recorded.uChar.AsciiChar;
 	}
 
-	char GetChar(const HANDLE consoleInputBuffer, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
+	char GetChar(const HANDLE consoleInput, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
 	{
-		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInputBuffer, inputBuffer, inputBufferLength, sleepduration);
+		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInput, inputBuffer, inputBufferLength, sleepduration);
 		return recorded.uChar.AsciiChar;
 	}
 
-	wchar_t GetWChar(const HANDLE consoleInputBuffer, DWORD sleepduration)
+	wchar_t GetWChar(const HANDLE consoleInput, DWORD sleepduration)
 	{
-		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInputBuffer, sleepduration);
+		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInput, sleepduration);
 		return recorded.uChar.UnicodeChar;
 	}
 
-	wchar_t GetWChar(const HANDLE consoleInputBuffer, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
+	wchar_t GetWChar(const HANDLE consoleInput, INPUT_RECORD * inputBuffer, const int inputBufferLength, DWORD sleepduration)
 	{
-		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInputBuffer, inputBuffer, inputBufferLength, sleepduration);
+		KEY_EVENT_RECORD recorded = GetKeyEvent(consoleInput, inputBuffer, inputBufferLength, sleepduration);
 		return recorded.uChar.UnicodeChar;
 	}
 
-	std::string GetLine(const HANDLE inputBuffer, char delimiter, DWORD sleepduration)
+	void WaitOnKey(const HANDLE consoleInput, DWORD sleepDuration)
+	{
+		FlushConsoleInputBuffer(consoleInput);
+		GetWChar(consoleInput, sleepDuration);
+	}
+
+	std::string GetLine(const HANDLE consoleInput, char delimiter, DWORD sleepduration)
 	{
 		std::string outputString = "";
-		INPUT_RECORD inputs[8];
+		INPUT_RECORD inputBuffer[8];
 		bool waiting = true;
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(inputBuffer, &inputs[0], 8, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], 8, itemsRead);
+			for (int i = 0; i < itemsRead; ++i)
+			{
+				// We only want key up events here
+				if (inputBuffer[i].EventType == KEY_EVENT && !inputBuffer[i].Event.KeyEvent.bKeyDown)
+				{
+					char code = inputBuffer[i].Event.KeyEvent.uChar.AsciiChar;
+					if (code == delimiter)
+						return outputString;
+					if (code == 8) // backspace in ASCII
+					{
+						if (outputString.size() != 0)
+							outputString.erase(outputString.end() - 1);
+					}
+					else if (code > 31)
+						outputString += code;
+				}
+			}
+			Sleep(sleepduration);
+		}
+	}
+
+	std::string GetLine(const HANDLE consoleInput, INPUT_RECORD * inputs, const int inputsLength, char delimiter, DWORD sleepduration)
+	{
+		assert(inputsLength > 0);
+
+		std::string outputString = "";
+		bool waiting = true;
+		while (waiting)
+		{
+			unsigned int itemsRead = 0;
+			GetInput(consoleInput, &inputs[0], inputsLength, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				// We only want key up events here
@@ -504,52 +499,21 @@ namespace ConsoleFunc
 		}
 	}
 
-	std::string GetLine(const HANDLE inputBuffer, INPUT_RECORD * inputs, const int inputsLength, char delimiter, DWORD sleepduration)
-	{
-		assert(inputsLength > 0);
-
-		std::string outputString = "";
-		bool waiting = true;
-		while (waiting)
-		{
-			unsigned int itemsRead = 0;
-			GetInput(inputBuffer, &inputs[0], inputsLength, itemsRead);
-			for (int i = 0; i < itemsRead; ++i)
-			{
-				// We only want key up events here
-				if (inputs[i].EventType == KEY_EVENT && !inputs[i].Event.KeyEvent.bKeyDown)
-				{
-					char code = inputs[i].Event.KeyEvent.uChar.AsciiChar;
-					if (code == delimiter)
-						return outputString;
-					if (code == 8) // backspace in ASCII
-					{
-						if (outputString.size() != 0)
-							outputString.erase(outputString.end() - 1);
-					}
-					else if (code > 31)
-						outputString += code;
-				}
-			}
-			Sleep(sleepduration);
-		}
-	}
-
-	std::wstring GetWLine(const HANDLE inputBuffer, char delimiter, DWORD sleepduration)
+	std::wstring GetWLine(const HANDLE consoleInput, char delimiter, DWORD sleepduration)
 	{
 		std::wstring outputString = L"";
-		INPUT_RECORD inputs[8];
+		INPUT_RECORD inputBuffer[8];
 		bool waiting = true;
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(inputBuffer, &inputs[0], 8, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], 8, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				// We only want key up events here
-				if (inputs[i].EventType == KEY_EVENT && !inputs[i].Event.KeyEvent.bKeyDown)
+				if (inputBuffer[i].EventType == KEY_EVENT && !inputBuffer[i].Event.KeyEvent.bKeyDown)
 				{
-					wchar_t code = inputs[i].Event.KeyEvent.uChar.UnicodeChar;
+					wchar_t code = inputBuffer[i].Event.KeyEvent.uChar.UnicodeChar;
 					if (code == delimiter)
 						return outputString;
 					if (code == 8) // backspace
@@ -565,7 +529,7 @@ namespace ConsoleFunc
 		}
 	}
 
-	std::wstring GetWLine(const HANDLE inputBuffer, INPUT_RECORD * inputs, const int inputsLength, char delimiter, DWORD sleepduration)
+	std::wstring GetWLine(const HANDLE consoleInput, INPUT_RECORD * inputBuffer, const int inputsLength, char delimiter, DWORD sleepduration)
 	{
 		assert(inputsLength > 0);
 
@@ -574,13 +538,13 @@ namespace ConsoleFunc
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(inputBuffer, &inputs[0], inputsLength, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], inputsLength, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				// We only want key up events here
-				if (inputs[i].EventType == KEY_EVENT && !inputs[i].Event.KeyEvent.bKeyDown)
+				if (inputBuffer[i].EventType == KEY_EVENT && !inputBuffer[i].Event.KeyEvent.bKeyDown)
 				{
-					wchar_t code = inputs[i].Event.KeyEvent.uChar.UnicodeChar;
+					wchar_t code = inputBuffer[i].Event.KeyEvent.uChar.UnicodeChar;
 					if (code == delimiter)
 						return outputString;
 					if (code == 8) // backspace
@@ -596,26 +560,26 @@ namespace ConsoleFunc
 		}
 	}
 
-	std::string GetLineVisualized(const HANDLE consoleScreenBuffer, const HANDLE consoleInputBuffer, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, char delimiter, DWORD sleepduration)
+	std::string GetLineVisualized(const HANDLE consoleScreen, const HANDLE consoleInput, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, char delimiter, DWORD sleepduration)
 	{
 		std::string outputString = "";
-		INPUT_RECORD inputs[8];
+		INPUT_RECORD inputBuffer[8];
 		int previousSize = 0;
 		bool waiting = true;
 		CHAR_INFO oldStyle;
-		GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, oldStyle);
+		GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, oldStyle);
 
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputs[0], 8, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], 8, itemsRead);
 			int currentSize = previousSize;
 			for (int i = 0; i < itemsRead; ++i)
 			{
 				// We only want key up events here
-				if (inputs[i].EventType == KEY_EVENT && !inputs[i].Event.KeyEvent.bKeyDown)
+				if (inputBuffer[i].EventType == KEY_EVENT && !inputBuffer[i].Event.KeyEvent.bKeyDown)
 				{
-					char code = inputs[i].Event.KeyEvent.uChar.AsciiChar;
+					char code = inputBuffer[i].Event.KeyEvent.uChar.AsciiChar;
 					if (code == delimiter)
 					{
 						return outputString;
@@ -638,39 +602,39 @@ namespace ConsoleFunc
 			int difference = currentSize - previousSize;
 			if (difference > 0) // characters added
 			{
-				WriteToConsole(consoleScreenBuffer, outputString.substr(outputString.size() - difference, difference));
+				WriteToConsole(consoleScreen, outputString.substr(outputString.size() - difference, difference));
 			}
 			else if (difference < 0) // characters removed
 			{
 				CHAR_INFO currentStyle;
-				GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, currentStyle);
+				GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, currentStyle);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, oldStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, oldStyle.Attributes);
 				std::string filler = "";
 				for (int i = 0; i > difference; --i)
 				{
 					filler += "\b \b";
 				}
-				WriteToConsole(consoleScreenBuffer, filler);
+				WriteToConsole(consoleScreen, filler);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, currentStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, currentStyle.Attributes);
 			}
 			Sleep(sleepduration);
 		}
 	}
 
-	std::string GetLineVisualized(const HANDLE consoleScreenBuffer, const HANDLE consoleInputBuffer, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, INPUT_RECORD * inputBuffer, const int inputBufferLength, char delimiter, DWORD sleepduration)
+	std::string GetLineVisualized(const HANDLE consoleScreen, const HANDLE consoleInput, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, INPUT_RECORD * inputBuffer, const int inputBufferLength, char delimiter, DWORD sleepduration)
 	{
 		std::string outputString = "";
 		int previousSize = 0;
 		bool waiting = true;
 		CHAR_INFO oldStyle;
-		GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, oldStyle);
+		GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, oldStyle);
 
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputBuffer[0], inputBufferLength, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], inputBufferLength, itemsRead);
 			int currentSize = previousSize;
 			for (int i = 0; i < itemsRead; ++i)
 			{
@@ -698,101 +662,40 @@ namespace ConsoleFunc
 			int difference = currentSize - previousSize;
 			if (difference > 0) // characters added
 			{
-				WriteToConsole(consoleScreenBuffer, outputString.substr(outputString.size() - difference, difference));
+				WriteToConsole(consoleScreen, outputString.substr(outputString.size() - difference, difference));
 			}
 			else if (difference < 0) // characters removed
 			{
 				CHAR_INFO currentStyle;
-				GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, currentStyle);
+				GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, currentStyle);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, oldStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, oldStyle.Attributes);
 				std::string filler = "";
 				for (int i = 0; i > difference; --i)
 				{
 					filler += "\b \b";
 				}
-				WriteToConsole(consoleScreenBuffer, filler);
+				WriteToConsole(consoleScreen, filler);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, currentStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, currentStyle.Attributes);
 			}
 			Sleep(sleepduration);
 		}
 	}
 
-	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer, const HANDLE consoleInputBuffer, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, char delimiter, DWORD sleepduration)
+	std::wstring GetWLineVisualized(const HANDLE consoleScreen, const HANDLE consoleInput, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, char delimiter, DWORD sleepduration)
 	{
 		std::wstring outputString;
-		INPUT_RECORD inputs[8];
+		INPUT_RECORD inputBuffer[8];
 		int previousSize = 0;
 		bool waiting = true;
 		CHAR_INFO oldStyle;
-		GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, oldStyle);
+		GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, oldStyle);
 
 		while (waiting)
 		{
 			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputs[0], 8, itemsRead);
-			int currentSize = previousSize;
-			for (int i = 0; i < itemsRead; ++i)
-			{
-				// We only want key up events here
-				if (inputs[i].EventType == KEY_EVENT && !inputs[i].Event.KeyEvent.bKeyDown)
-				{
-					wchar_t code = inputs[i].Event.KeyEvent.uChar.UnicodeChar;
-					if (code == delimiter)
-						return outputString;
-					if (code == 8) // backspace
-					{
-						if (outputString.size() != 0)
-						{
-							outputString.erase(outputString.end() - 1);
-							--currentSize;
-						}
-					}
-					else if (code > 31) // We ignore the non-character codes
-					{
-						outputString += code;
-						++currentSize;
-					}
-				}
-			}
-			int difference = currentSize - previousSize;
-			if (difference > 0) // characters added
-			{
-				WriteToConsole(consoleScreenBuffer, outputString.substr(outputString.size() - difference, difference));
-			}
-			else if (difference < 0) // characters removed
-			{
-				CHAR_INFO currentStyle;
-				GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, currentStyle);
-
-				SetConsoleTextAttribute(consoleScreenBuffer, oldStyle.Attributes);
-				std::string filler = "";
-				for (int i = 0; i > difference; --i)
-				{
-					filler += "\b \b";
-				}
-				WriteToConsole(consoleScreenBuffer, filler);
-
-				SetConsoleTextAttribute(consoleScreenBuffer, currentStyle.Attributes);
-			}
-			Sleep(sleepduration);
-		}
-	}
-
-	std::wstring GetWLineVisualized(const HANDLE consoleScreenBuffer, const HANDLE consoleInputBuffer, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, INPUT_RECORD * inputBuffer, const int inputBufferLength, char delimiter, DWORD sleepduration)
-	{
-		std::wstring outputString;
-
-		int previousSize = 0;
-		bool waiting = true;
-		CHAR_INFO oldStyle;
-		GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, oldStyle);
-
-		while (waiting)
-		{
-			unsigned int itemsRead = 0;
-			GetInput(consoleInputBuffer, &inputBuffer[0], inputBufferLength, itemsRead);
+			GetInput(consoleInput, &inputBuffer[0], 8, itemsRead);
 			int currentSize = previousSize;
 			for (int i = 0; i < itemsRead; ++i)
 			{
@@ -820,22 +723,83 @@ namespace ConsoleFunc
 			int difference = currentSize - previousSize;
 			if (difference > 0) // characters added
 			{
-				WriteToConsole(consoleScreenBuffer, outputString.substr(outputString.size() - difference, difference));
+				WriteToConsole(consoleScreen, outputString.substr(outputString.size() - difference, difference));
 			}
 			else if (difference < 0) // characters removed
 			{
 				CHAR_INFO currentStyle;
-				GetCharFromConsole(consoleScreenBuffer, consoleInfo.dwCursorPosition, currentStyle);
+				GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, currentStyle);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, oldStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, oldStyle.Attributes);
 				std::string filler = "";
 				for (int i = 0; i > difference; --i)
 				{
 					filler += "\b \b";
 				}
-				WriteToConsole(consoleScreenBuffer, filler);
+				WriteToConsole(consoleScreen, filler);
 
-				SetConsoleTextAttribute(consoleScreenBuffer, currentStyle.Attributes);
+				SetConsoleTextAttribute(consoleScreen, currentStyle.Attributes);
+			}
+			Sleep(sleepduration);
+		}
+	}
+
+	std::wstring GetWLineVisualized(const HANDLE consoleScreen, const HANDLE consoleInput, const CONSOLE_SCREEN_BUFFER_INFO consoleInfo, INPUT_RECORD * inputBuffer, const int inputBufferLength, char delimiter, DWORD sleepduration)
+	{
+		std::wstring outputString;
+
+		int previousSize = 0;
+		bool waiting = true;
+		CHAR_INFO oldStyle;
+		GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, oldStyle);
+
+		while (waiting)
+		{
+			unsigned int itemsRead = 0;
+			GetInput(consoleInput, &inputBuffer[0], inputBufferLength, itemsRead);
+			int currentSize = previousSize;
+			for (int i = 0; i < itemsRead; ++i)
+			{
+				// We only want key up events here
+				if (inputBuffer[i].EventType == KEY_EVENT && !inputBuffer[i].Event.KeyEvent.bKeyDown)
+				{
+					wchar_t code = inputBuffer[i].Event.KeyEvent.uChar.UnicodeChar;
+					if (code == delimiter)
+						return outputString;
+					if (code == 8) // backspace
+					{
+						if (outputString.size() != 0)
+						{
+							outputString.erase(outputString.end() - 1);
+							--currentSize;
+						}
+					}
+					else if (code > 31) // We ignore the non-character codes
+					{
+						outputString += code;
+						++currentSize;
+					}
+				}
+			}
+			int difference = currentSize - previousSize;
+			if (difference > 0) // characters added
+			{
+				WriteToConsole(consoleScreen, outputString.substr(outputString.size() - difference, difference));
+			}
+			else if (difference < 0) // characters removed
+			{
+				CHAR_INFO currentStyle;
+				GetCharFromConsole(consoleScreen, consoleInfo.dwCursorPosition, currentStyle);
+
+				SetConsoleTextAttribute(consoleScreen, oldStyle.Attributes);
+				std::string filler = "";
+				for (int i = 0; i > difference; --i)
+				{
+					filler += "\b \b";
+				}
+				WriteToConsole(consoleScreen, filler);
+
+				SetConsoleTextAttribute(consoleScreen, currentStyle.Attributes);
 			}
 			Sleep(sleepduration);
 		}
@@ -851,13 +815,13 @@ namespace ConsoleFunc
 		return static_cast<unsigned int>(fontColor) | static_cast<unsigned int>(bgColor);
 	}
 
-	bool HideConsoleCursor(HANDLE consoleScreenBuffer)
+	bool HideConsoleCursor(HANDLE consoleScreen)
 	{
 		CONSOLE_CURSOR_INFO cursorInfo;
-		if (GetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+		if (GetConsoleCursorInfo(consoleScreen, &cursorInfo))
 		{
 			cursorInfo.bVisible = false;
-			if (SetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+			if (SetConsoleCursorInfo(consoleScreen, &cursorInfo))
 			{
 				return true;
 			}
@@ -866,13 +830,13 @@ namespace ConsoleFunc
 		return false;
 	}
 
-	bool ShowConsoleCursor(HANDLE consoleScreenBuffer)
+	bool ShowConsoleCursor(HANDLE consoleScreen)
 	{
 		CONSOLE_CURSOR_INFO cursorInfo;
-		if (GetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+		if (GetConsoleCursorInfo(consoleScreen, &cursorInfo))
 		{
 			cursorInfo.bVisible = true;
-			if (SetConsoleCursorInfo(consoleScreenBuffer, &cursorInfo))
+			if (SetConsoleCursorInfo(consoleScreen, &cursorInfo))
 			{
 				return true;
 			}
