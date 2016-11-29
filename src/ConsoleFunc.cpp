@@ -1,24 +1,24 @@
 /*
-	ALPHA V0.4
+ALPHA V0.5
 
-	Copyright (c) 2016  Tijmen van Nesselrooij
+Copyright (c) 2016  Tijmen van Nesselrooij
 
-	Permission is hereby granted, free of charge, to any person obtaining a copy of
-	this software and associated documentation files (the "Software"), to deal in the
-	Software without restriction, including without limitation the rights to use, copy,
-	modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-	and to permit persons to whom the Software is furnished to do so, subject to the
-	following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so, subject to the
+following conditions:
 
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-	INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-	PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-	OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "ConsoleFunc.h"
@@ -146,18 +146,20 @@ namespace ConsoleFunc
 		return SetConsoleMode(consoleInput, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 	}
 
-	bool InitConsole(HANDLE & consoleScreen)
+	bool InitConsole(HANDLE & consoleScreen, HANDLE & out_previousOutputHandle)
 	{
+		
 		consoleScreen = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, 0, CONSOLE_TEXTMODE_BUFFER, 0);
 		if (consoleScreen == INVALID_HANDLE_VALUE)
 		{
 			return false;
 		}
-		return SetConsoleActiveScreenBuffer(consoleScreen);
+		return SetScreenBuffer(consoleScreen, out_previousOutputHandle);
 	}
 
-	bool SetScreenBuffer(const HANDLE & consoleScreen)
+	bool SetScreenBuffer(const HANDLE & consoleScreen, HANDLE & out_previousOutputHandle)
 	{
+		out_previousOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		return SetConsoleActiveScreenBuffer(consoleScreen);
 	}
 
@@ -166,12 +168,17 @@ namespace ConsoleFunc
 		return GetConsoleScreenBufferInfo(consoleScreen, &consoleInfo);
 	}
 
-	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo)
+	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo, HANDLE & out_previousOutputHandle)
 	{
-		if (InitConsole(consoleScreen) && SetScreenBuffer(consoleScreen) && GetConsoleInfo(consoleScreen, consoleInfo))
+		if (InitConsole(consoleScreen, out_previousOutputHandle) && GetConsoleInfo(consoleScreen, consoleInfo))
 			return true;
 		else
 			return false;
+	}
+
+	bool DestroyConsole(HANDLE & consoleScreen, HANDLE & previousOutputHandle)
+	{
+		return SetStdHandle(STD_OUTPUT_HANDLE, previousOutputHandle) && CloseHandle(consoleScreen);
 	}
 
 	bool GetCharFromConsole(const HANDLE & consoleScreen, const COORD location, CHAR_INFO & outputBuffer)
@@ -805,7 +812,7 @@ namespace ConsoleFunc
 		}
 	}
 
-	bool DeleteInputHandle(HANDLE & inputBuffer, DWORD previousInputBufferConfig)
+	bool DestroyInputHandle(HANDLE & inputBuffer, DWORD previousInputBufferConfig)
 	{
 		return SetConsoleMode(inputBuffer, previousInputBufferConfig);
 	}

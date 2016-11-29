@@ -1,9 +1,5 @@
-#ifndef CONSOLEFUNC_H
-#define CONSOLEFUNC_H
-#pragma once 
-
 /*
-ALPHA V0.4
+ALPHA V0.5
 
 Copyright (c) 2016 Tijmen van Nesselrooij
 
@@ -32,6 +28,9 @@ functionality without having to rewrite the interfacing with the
 Windows API as much.
 */
 
+#ifndef CONSOLEFUNC_H
+#define CONSOLEFUNC_H
+#pragma once 
 #include <cassert>
 #include <memory>
 #include <vector>
@@ -89,17 +88,24 @@ namespace ConsoleFunc
 
 	// Handle parameter will contain the new handle
 	// Returns if succesfull
-	bool InitConsole(HANDLE & consoleScreen);
+	bool InitConsole(HANDLE & consoleScreen, HANDLE & out_previousOutput);
 
 	// Sets the console screenbuffer to the given handle, returns if succesful
-	bool SetScreenBuffer(const HANDLE & consoleScreen);
+	bool SetScreenBuffer(const HANDLE & consoleScreen, HANDLE & out_previousOutput);
 
 	// Stores the window data in the second parameter, returns if succesful
 	bool GetConsoleInfo(const HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
 
 	// Combines the init, setting screen buffer and fetching console buffer info
 	// Returns if succesful
-	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo);
+	bool SetupConsole(HANDLE & consoleScreen, CONSOLE_SCREEN_BUFFER_INFO & consoleInfo, HANDLE & out_previousOutput);
+
+	// Closes the consolescreen handle and restores the output handle to the given previousoutputhandle
+	bool DestroyConsole(HANDLE & consoleScreen, HANDLE & previousOutput);
+
+	// Closes the output handle and restores the input handle created by the console
+	// Returns if succesfull
+	bool DestroyInputHandle(HANDLE & consoleInput, DWORD previousConsoleInputConfig);
 
 #pragma region Console Input
 	// Reads what is displayed on screen on a given location, 
@@ -333,10 +339,6 @@ namespace ConsoleFunc
 		DWORD sleepduration = 5);
 
 #pragma endregion
-
-	// Closes the output handle and restores the input handle created by the console
-	// Returns if succesfull
-	bool DeleteInputHandle(HANDLE & consoleInput, DWORD previousConsoleInputConfig);
 
 	enum class FONTCOLOR {
 		BLACK = 0x00,

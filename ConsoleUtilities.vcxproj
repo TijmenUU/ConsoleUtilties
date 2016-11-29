@@ -117,11 +117,13 @@
     <ClCompile Include="src\ConsoleFunc.cpp" />
     <ClCompile Include="src\ConsoleObj.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Tetris.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Breakout.h" />
     <ClInclude Include="src\ConsoleFunc.h" />
     <ClInclude Include="src\ConsoleObj.h" />
+    <ClInclude Include="src\Tetris.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,5 @@
 /*
-ALPHA V0.4
+ALPHA V0.5
 
 Copyright (c) 2016  Tijmen van Nesselrooij
 
@@ -24,6 +24,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <conio.h>
 #include "Breakout.h"
 #include "ConsoleObj.h"
+#include "Tetris.h"
 
 void DemonstrateCout()
 {
@@ -54,32 +55,42 @@ void DemonstrateCout()
 	cout << input << "\n\n" << "Press any key to continue...";
 
 	ConsoleFunc::WaitOnKey(inputHandle);
-	ConsoleFunc::DeleteInputHandle(inputHandle, inputConfigBackup); // Restore input so that you can use std::cin again
-}
-
-void PlayBreakOut()
-{
-	if (BreakOutGame::Setup())
-	{
-		BreakOutGame::Loop();
-		if (!BreakOutGame::Exit())
-		{
-			std::cerr << "Something went wrong in BreakOutGame::Exit()\n";
-		}
-	}
-	else
-	{
-		std::cerr << "Something went wrong in BreakOutGame::Setup()\n";
-	}
+	ConsoleFunc::DestroyInputHandle(inputHandle, inputConfigBackup); // Restore input so that you can use std::cin again
 }
 
 int main(int argc, char ** argv)
 {
-	DemonstrateCout();
-	PlayBreakOut();
-
-	std::cout << "And all was normal again. Press any key to exit...";
-	_getch();
-
+	while (true)
+	{
+		std::cout << "[B]reakout [C]out demonstration [T]etris [E]xit";
+		int key = _getch();
+		switch (key)
+		{
+			case 'b':
+			{
+				BreakOutGame::Play();
+				break;
+			}
+			case 'c':
+			{
+				DemonstrateCout();
+				break;
+			}
+			case 'e':
+			{
+				return 0;
+			}
+			case 't':
+			{
+				TetrisGame::Play();
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+	}
+	
 	return 0;
 }

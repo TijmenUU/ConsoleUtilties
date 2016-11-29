@@ -21,18 +21,16 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef BREAKOUT_H
-#define BREAKOUT_H
-#pragma once 
-#include "ConsoleFunc.h"
+#ifndef TETRIS_H
+#define TETRIS_H
+#pragma once
 #include <ctime>
+#include "ConsoleFunc.h"
 #include <iostream>
-#include <string>
-#include <Windows.h>
 
-namespace BreakOutGame
+namespace TetrisGame
 {
 	void Play();
 }
 
-#endif 
+#endif // !TETRIS_H
