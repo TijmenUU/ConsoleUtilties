@@ -23,7 +23,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef CONSOLEOBJ_H
 #define CONSOLEOBJ_H
-#pragma once 
+#pragma once
 #include "ConsoleFunc.h"
 #include <iostream>
 #include <cassert>
@@ -69,13 +69,12 @@ namespace ConsoleObj
 		void Print(const std::string message, const COORD printingLocation);
 		// Classical Print behaviour at a custom location. Does not affect the cursor position!
 		void Print(const std::wstring message, const COORD printingLocation);
-		
+
 		// Use this to update the cursor of COUT after you have done printing
 		// without using this Object (instance)
 		void UpdateCursor();
 
 		// Handle input streams <<
-
 		Cout& operator << (const char s);
 		Cout& operator << (const wchar_t s);
 		Cout& operator << (const char * s);
@@ -83,6 +82,9 @@ namespace ConsoleObj
 		Cout& operator << (const std::string &s);
 		Cout& operator << (const std::wstring &s);
 		Cout& operator << (std::istream &in);
+		Cout& operator << (const COORD printLocation);
+		Cout& operator << (const ConsoleFunc::FONTCOLOR color);
+		Cout& operator << (const ConsoleFunc::BACKGROUNDCOLOR color);
 		// TODO differentiate between ascii and unicode strings
 
 		// Getters and setters
@@ -106,7 +108,7 @@ namespace ConsoleObj
 		from the RadioButtonItem and override to your hearts desire! Or create complete new
 		wacky things by inheriting from MenuItem.
 	*/
-	
+
 	class MenuItem
 	{
 	protected:
@@ -147,9 +149,9 @@ namespace ConsoleObj
 		// Highlight the previous item (wraps around)
 		void PreviousItem(const HANDLE outputHandle);
 		// Insert a new MenuItem, -1 means insert as last, 0 is first
-		void InsertItem(const MenuItem item, const int location = -1); 
+		void InsertItem(const MenuItem item, const int location = -1);
 		// Delete the menu item from given position
-		bool DeleteItem(const int location); 
+		bool DeleteItem(const int location);
 		void HandleKeybInput(const INPUT_RECORD key, const HANDLE outputHandle);
 		void HandleMouseInput(const INPUT_RECORD mouseAction, const HANDLE outputHandle);
 		void Draw(const HANDLE outputHandle);

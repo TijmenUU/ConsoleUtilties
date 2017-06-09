@@ -28,21 +28,14 @@ namespace ConsoleObj
 #pragma region Cin Cout
 	Cout::Cout()
 	{
-		previousOutputHandle_ = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		if (!ConsoleFunc::InitConsole(screenBuffer_))
+		if (!ConsoleFunc::InitConsole(screenBuffer_, previousOutputHandle_))
 		{
-			throw std::exception("Cout: Failed to create a console window.");
-		}
-		if (!ConsoleFunc::SetScreenBuffer(screenBuffer_))
-		{
-			CloseHandle(screenBuffer_);
-			throw std::exception("Cout: Failed to set screenbuffer to active.");
+			throw std::runtime_error("Cout: Failed to create a console window.");
 		}
 		if (!ConsoleFunc::GetConsoleInfo(screenBuffer_, screenBufferInfo_))
 		{
 			CloseHandle(screenBuffer_);
-			throw std::exception("Cout: Failed to get screenbuffer info.");
+			throw std::runtime_error("Cout: Failed to get screenbuffer info.");
 		}
 
 		SetFontColor(ConsoleFunc::FONTCOLOR::WHITE);
@@ -139,47 +132,66 @@ namespace ConsoleObj
 	}
 
 #pragma region <<
-	Cout & Cout::operator<<(const char s)
+	Cout & Cout::operator << (const char s)
 	{
 		Print(&s, 1);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(const wchar_t s)
+	Cout & Cout::operator << (const wchar_t s)
 	{
 		Print(&s, 1);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(const char * s)
+	Cout & Cout::operator << (const char * s)
 	{
 		Print(s);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(const wchar_t * s)
+	Cout & Cout::operator << (const wchar_t * s)
 	{
 		Print(s);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(const std::string & s)
+	Cout & Cout::operator << (const std::string & s)
 	{
 		Print(s);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(const std::wstring & s)
+	Cout & Cout::operator << (const std::wstring & s)
 	{
 		Print(s);
 		return *this;
 	}
 
-	Cout & Cout::operator<<(std::istream & in)
+	Cout & Cout::operator << (std::istream & in)
 	{
 		Print(std::string(std::istreambuf_iterator<char>(in), {}));
 		return *this;
 	}
+
+	Cout & Cout::operator << (const COORD printLocation)
+	{
+		SetCursorPosition(printLocation);
+		return *this;
+	}
+
+	Cout & Cout::operator << (const ConsoleFunc::FONTCOLOR color)
+	{
+		SetFontColor(color);
+		return *this;
+	}
+
+	Cout & Cout::operator << (const ConsoleFunc::BACKGROUNDCOLOR color)
+	{
+		SetBackgroundColor(color);
+		return *this;
+	}
+
 #pragma endregion
 	void Cout::SetCursorPosition(const int x, const int y)
 	{

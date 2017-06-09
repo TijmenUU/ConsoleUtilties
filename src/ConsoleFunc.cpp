@@ -86,7 +86,7 @@ namespace ConsoleFunc
 			return false;
 		}
 	}
-	
+
 	bool GetClipboardContents(std::string & output, HWND windowHandle)
 	{
 		if (!OpenClipboard(windowHandle))
@@ -148,7 +148,6 @@ namespace ConsoleFunc
 
 	bool InitConsole(HANDLE & consoleScreen, HANDLE & out_previousOutputHandle)
 	{
-		
 		consoleScreen = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, 0, CONSOLE_TEXTMODE_BUFFER, 0);
 		if (consoleScreen == INVALID_HANDLE_VALUE)
 		{
@@ -385,7 +384,7 @@ namespace ConsoleFunc
 		INPUT_RECORD inputs[8];
 		while (true)
 		{
-			unsigned int itemsRead = 0;
+			unsigned int itemsRead = 0U;
 			GetInput(consoleInput, &inputs[0], 8, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
@@ -402,7 +401,7 @@ namespace ConsoleFunc
 	{
 		while (true)
 		{
-			unsigned int itemsRead = 0;
+			unsigned int itemsRead = 0U;
 			GetInput(consoleInput, &inputBuffer[0], inputBufferLength, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
@@ -483,7 +482,7 @@ namespace ConsoleFunc
 		bool waiting = true;
 		while (waiting)
 		{
-			unsigned int itemsRead = 0;
+			unsigned int itemsRead = 0U;
 			GetInput(consoleInput, &inputs[0], inputsLength, itemsRead);
 			for (int i = 0; i < itemsRead; ++i)
 			{
@@ -590,7 +589,7 @@ namespace ConsoleFunc
 					if (code == delimiter)
 					{
 						return outputString;
-					}	
+					}
 					if (code == 8) // backspace in ASCII
 					{
 						if (outputString.size() != 0)
