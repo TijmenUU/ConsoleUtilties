@@ -21,7 +21,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "ExtendedCout.hpp"
+#include "ExtendedIO.hpp"
 #include <iomanip>
 
 int main(int argc, char ** argv)

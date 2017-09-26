@@ -21,12 +21,13 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef EXTENDEDCOUT_HPP
-#define EXTENDEDCOUT_HPP
+#ifndef EXTENDEDIO_HPP
+#define EXTENDEDIO_HPP
 #pragma once
 
 #include <memory>
 #include <iostream>
+#include <vector>
 #include <Windows.h>
 
 namespace ExtendedIO
@@ -255,6 +256,55 @@ namespace ExtendedIO
 		}
 
 		return outputStream;
+	}
+
+	struct InputEvent : public INPUT_RECORD
+	{
+		// Retrieves the STD_OUTPUT_HANDLE cursor position
+		friend std::istream & operator >>(std::istream & inputStream,
+			InputEvent & inputEvent);
+
+		enum class TYPE : std::uint16_t
+		{
+			FOCUS  = 0x0010,
+			KEY 	 = 0x0001,
+			MENU 	 = 0x0008,
+			MOUSE  = 0x0002,
+			RESIZE = 0x0004
+		};
+
+		//enum class CTRLKEYS
+
+		TYPE GetEventType() const
+		{
+			return static_cast<TYPE>(EventType);
+		}
+	};
+
+	std::istream & operator >>(std::istream & inputStream,
+		InputEvent & inputEvent)
+	{
+		DWORD itemsRead = 0;
+		ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),
+			&inputEvent,
+			1,
+			&itemsRead);
+
+		return inputStream;
+	}
+
+	std::istream & operator >>(std::istream & inputStream,
+		std::vector<InputEvent> & inputEvents)
+	{
+		DWORD itemsRead = 0;
+		ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),
+			&inputEvents[0],
+			inputEvents.size(),
+			&itemsRead);
+
+		inputEvents.resize(itemsRead);
+
+		return inputStream;
 	}
 }
 
