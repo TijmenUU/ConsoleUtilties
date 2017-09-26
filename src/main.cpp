@@ -21,47 +21,27 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <conio.h>
-#include "ConsoleObj.h"
-
-void DemonstrateCout()
-{
-	ConsoleObj::Cout cout;
-	HANDLE inputHandle;
-	DWORD inputConfigBackup;
-
-	ConsoleFunc::EnableConsoleInput(inputHandle, inputConfigBackup);
-
-	cout.SetFontColor(ConsoleFunc::FONTCOLOR::GREEN);
-	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKBLUE);
-
-	COORD oddCoordinate;
-		oddCoordinate.X = 50;
-		oddCoordinate.Y = 10;
-	cout.Print("Odd printing location", oddCoordinate); // You can print things in odd places
-
-	cout << "Give me something to echo: ";
-	std::string input = ConsoleFunc::GetLineVisualized(cout._GetOutputHandle(),
-		inputHandle,
-		cout.GetConsoleScreenBufferInfo());
-	cout.UpdateCursor(); // Since Get Line Visualized prints our keystrokes we need to do this
-	cout << "\nYou wrote: "; // Goto next line
-
-	cout.SetFontColor(ConsoleFunc::FONTCOLOR::YELLOW);
-	cout.SetBackgroundColor(ConsoleFunc::BACKGROUNDCOLOR::DARKGREEN);
-
-	cout << input << "\n\n" << "Press any key to continue...";
-
-	ConsoleFunc::GetChar(inputHandle);
-	ConsoleFunc::DeleteInputHandle(inputHandle, inputConfigBackup); // Restore input so that you can use std::cin again
-}
+#include "ExtendedCout.hpp"
+#include <iomanip>
 
 int main(int argc, char ** argv)
 {
-	DemonstrateCout();
+	ExtendedIO::Color originalColor;
+	std::cout >> originalColor;
 
-	std::cout << "And all was normal again. Press any key to exit...";
-	_getch();
+	ExtendedIO::Color color(ExtendedIO::Color::BACKGROUND::DARKGREEN);
+	for(std::uint16_t i = 0x00; i <= 0x0F; ++i)
+	{
+		std::cout << std::setw(4) << color + i << i << ' ';
+	}
 
+	std::cout << std::endl;
+	color = ExtendedIO::Color::FONT::WHITE;
+	for(std::uint16_t i = 0x00; i <= 0xF0; i += 0x10)
+	{
+		std::cout << std::setw(4) << color + i << i << ' ';
+	}
+
+	std::cout << originalColor;
 	return 0;
 }
