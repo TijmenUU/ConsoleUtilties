@@ -27,7 +27,76 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace WinUtil
 {
+	bool GetWindowHandle(HWND & windowHandle)
+	{
+		windowHandle = GetActiveWindow();
+		return windowHandle != nullptr;
+	}
 
+	bool SetClipboardText(const std::string & string)
+	{
+		HANDLE windowHandle;
+		if (!GetWindowHandle(windowHandle))
+			return false;
+
+		if (!OpenClipboard(windowHandle))
+			return false;
+
+		if (EmptyClipboard())
+		{
+			HGLOBAL globalAlloc = GlobalAlloc(GMEM_MOVEABLE, string.size());
+			if (!globalAlloc)
+			{
+				CloseClipboard();
+				return false;
+			}
+			memcpy(GlobalLock(globalAlloc), &string[0], string.size());
+			GlobalUnlock(globalAlloc);
+			if (SetClipboardData(CF_TEXT, globalAlloc) == nullptr)
+			{
+				CloseClipboard();
+				GlobalFree(globalAlloc);
+				return false;
+			}
+			CloseClipboard(); // Not much we can do if this fails...
+			GlobalFree(globalAlloc);
+			return true;
+		}
+		else
+		{
+			CloseClipboard();
+			return false;
+		}
+	}
+
+	bool GetClipboardText(std::string & output)
+	{
+		HANDLE windowHandle;
+		if (!GetWindowHandle(windowHandle))
+			return false;
+
+		if (!OpenClipboard(windowHandle))
+			return false;
+
+		if (IsClipboardFormatAvailable(CF_TEXT))
+		{
+			HGLOBAL clipboardData = GetClipboardData(CF_TEXT);
+			if (clipboardData != nullptr)
+			{
+				LPVOID clipboardDataPointer = GlobalLock(clipboardData);
+				if (clipboardDataPointer != nullptr)
+				{
+					output.clear();
+					output.assign(static_cast<char*>(clipboardDataPointer));
+				}
+				GlobalUnlock(clipboardData);
+				CloseClipboard();
+				return true;
+			}
+		}
+		CloseClipboard();
+		return false;
+	}
 }
 
 #endif
