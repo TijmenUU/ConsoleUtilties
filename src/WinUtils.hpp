@@ -25,22 +25,31 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define WINUTILS_H
 #pragma once
 
+#include <cstring> // memcpy
+#include <exception>
+#include <string>
+#include <Windows.h>
+
 namespace WinUtil
 {
-	bool GetWindowHandle(HWND & windowHandle)
+	// Throws a runtime_error if it cannot fetch the handle
+	void GetWindowHandle(HWND & windowHandle)
 	{
-		windowHandle = GetActiveWindow();
-		return windowHandle != nullptr;
+		windowHandle = GetForegroundWindow();
+		if(windowHandle == nullptr)
+		{
+			throw std::runtime_error("Failed to retrieve handle for active window.");
+		}
 	}
 
-	bool SetClipboardText(const std::string & string)
+	// Throws a runtime_error if it encounters any errors (see .what())
+	void SetClipboardText(const std::string & string)
 	{
-		HANDLE windowHandle;
-		if (!GetWindowHandle(windowHandle))
-			return false;
+		HWND windowHandle;
+		GetWindowHandle(windowHandle);
 
 		if (!OpenClipboard(windowHandle))
-			return false;
+			throw std::runtime_error("Failed to open clipboard.");
 
 		if (EmptyClipboard())
 		{
@@ -48,35 +57,35 @@ namespace WinUtil
 			if (!globalAlloc)
 			{
 				CloseClipboard();
-				return false;
+				throw std::runtime_error("Failed to allocate required space.");
 			}
-			memcpy(GlobalLock(globalAlloc), &string[0], string.size());
+			std::memcpy(GlobalLock(globalAlloc), &string[0], string.size());
 			GlobalUnlock(globalAlloc);
 			if (SetClipboardData(CF_TEXT, globalAlloc) == nullptr)
 			{
 				CloseClipboard();
 				GlobalFree(globalAlloc);
-				return false;
+				throw std::runtime_error("Failed to set clipboard data.");
 			}
 			CloseClipboard(); // Not much we can do if this fails...
 			GlobalFree(globalAlloc);
-			return true;
 		}
 		else
 		{
 			CloseClipboard();
-			return false;
+			throw std::runtime_error("Failed to empty the clipboard.");
 		}
 	}
 
-	bool GetClipboardText(std::string & output)
+	// Throws a runtime_error if it encounters any errors (see .what())
+	// If no text is available the string is untouched
+	void GetClipboardText(std::string & output)
 	{
-		HANDLE windowHandle;
-		if (!GetWindowHandle(windowHandle))
-			return false;
+		HWND windowHandle;
+		GetWindowHandle(windowHandle);
 
 		if (!OpenClipboard(windowHandle))
-			return false;
+			throw std::runtime_error("Failed to open clipboard.");
 
 		if (IsClipboardFormatAvailable(CF_TEXT))
 		{
@@ -91,11 +100,9 @@ namespace WinUtil
 				}
 				GlobalUnlock(clipboardData);
 				CloseClipboard();
-				return true;
 			}
 		}
 		CloseClipboard();
-		return false;
 	}
 }
 
