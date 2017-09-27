@@ -25,16 +25,20 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define EXTENDEDIO_HPP
 #pragma once
 
-#include <memory>
 #include <iostream>
 #include <vector>
 #include <Windows.h>
 
 namespace ExtendedIO
 {
+	/*
+		Important notice: these functions will fail silently. No exceptions should
+		be thrown in case of failures.
+	*/
+
 	struct Color
 	{
-		enum class FONT : std::uint16_t
+		enum class Font : std::uint16_t
 		{
 			BLACK = 0x00,
 			DARKBLUE = 0x01,
@@ -54,7 +58,7 @@ namespace ExtendedIO
 			WHITE = 0x0F
 		};
 
-		enum class BACKGROUND : std::uint16_t
+		enum class Background : std::uint16_t
 		{
 			BLACK = 0x00,
 			DARKBLUE = 0x10,
@@ -147,25 +151,25 @@ namespace ExtendedIO
 		{
 		}
 
-		Color(const Color::FONT fontColor)
+		Color(const Font fontColor)
 		: value(static_cast<std::uint16_t>(fontColor))
 		{
 		}
 
-		Color(const Color::BACKGROUND backgroundColor)
+		Color(const Background backgroundColor)
 		: value(static_cast<std::uint16_t>(backgroundColor))
 		{
 		}
 	};
 
-	std::uint16_t operator |(const Color::FONT fontColor,
-		const Color::BACKGROUND backgroundColor)
+	std::uint16_t operator |(const Color::Font fontColor,
+		const Color::Background backgroundColor)
 	{
 		return static_cast<std::uint16_t>(fontColor) |
 			static_cast<std::uint16_t>(backgroundColor);
 	}
-	std::uint16_t operator |(const Color::BACKGROUND backgroundColor,
-		const Color::FONT fontColor)
+	std::uint16_t operator |(const Color::Background backgroundColor,
+		const Color::Font fontColor)
 	{
 		return static_cast<std::uint16_t>(fontColor) |
 			static_cast<std::uint16_t>(backgroundColor);
@@ -189,28 +193,28 @@ namespace ExtendedIO
 		return outputStream;
 	}
 
-	struct Cursor : public COORD
+	struct Coordinate : public COORD
 	{
-		Cursor operator +(const COORD & other)
+		Coordinate operator +(const COORD & other)
 		{
-			return Cursor(X + other.X,
+			return Coordinate(X + other.X,
 									Y + other.Y);
 		}
 
-		Cursor operator -(const COORD & other)
+		Coordinate operator -(const COORD & other)
 		{
-			return Cursor(X - other.X,
+			return Coordinate(X - other.X,
 									Y - other.Y);
 		}
 
-		Cursor & operator +=(const COORD & other)
+		Coordinate & operator +=(const COORD & other)
 		{
 			X += other.X;
 			Y += other.Y;
 			return *this;
 		}
 
-		Cursor & operator -=(const COORD & other)
+		Coordinate & operator -=(const COORD & other)
 		{
 			X -= other.X;
 			Y -= other.Y;
@@ -219,26 +223,25 @@ namespace ExtendedIO
 
 		// Sets the STD_OUTPUT_HANDLE cursor position
 		friend std::ostream & operator <<(std::ostream & outputStream,
-			const Cursor & cursor);
+			const Coordinate & cursor);
 		// Retrieves the STD_OUTPUT_HANDLE cursor position
 		friend std::ostream & operator >>(std::ostream & outputStream,
-			Cursor & cursor);
+			Coordinate & cursor);
 
 		// Creates a cursor at position 0, 0
-		Cursor()
+		Coordinate()
 		: COORD{0, 0}
 		{
 		}
 
-		// Creates a cursor at the given position
-		Cursor(const std::int16_t x, const std::int16_t y)
+		Coordinate(const std::int16_t x, const std::int16_t y)
 		: COORD{x, y}
 		{
 		}
 	};
 
 	std::ostream & operator <<(std::ostream & outputStream,
-		const Cursor & cursor)
+		const Coordinate & cursor)
 	{
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursor);
 
@@ -246,7 +249,7 @@ namespace ExtendedIO
 	}
 
 	std::ostream & operator >>(std::ostream & outputStream,
-		Cursor & cursor)
+		Coordinate & cursor)
 	{
 		CONSOLE_SCREEN_BUFFER_INFO conInfo;
 		if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
@@ -264,7 +267,7 @@ namespace ExtendedIO
 		friend std::istream & operator >>(std::istream & inputStream,
 			InputEvent & inputEvent);
 
-		enum class TYPE : std::uint16_t
+		enum class Type : std::uint16_t
 		{
 			FOCUS  = 0x0010,
 			KEY 	 = 0x0001,
@@ -273,11 +276,9 @@ namespace ExtendedIO
 			RESIZE = 0x0004
 		};
 
-		//enum class CTRLKEYS
-
-		TYPE GetEventType() const
+		Type GetEventType() const
 		{
-			return static_cast<TYPE>(EventType);
+			return static_cast<Type>(EventType);
 		}
 	};
 
@@ -305,6 +306,80 @@ namespace ExtendedIO
 		inputEvents.resize(itemsRead);
 
 		return inputStream;
+	}
+
+	namespace Window
+	{
+		struct Rectangle
+		{
+			Coordinate topLeft;
+			Coordinate bottomRight;
+
+			// Get the current output viewport rectangle
+			friend std::ostream & operator >>(std::ostream & outputStream,
+				Rectangle & rect);
+
+			Rectangle()
+			: topLeft(),
+			bottomRight()
+			{
+			}
+
+			Rectangle(const std::uint16_t x0,
+				const std::uint16_t y0,
+				const std::uint16_t x1,
+				const std::uint16_t y1)
+			: topLeft(x0, y0),
+			bottomRight(x1, y1)
+			{
+			}
+
+			Rectangle(const Coordinate _topLeft,
+				const Coordinate _bottomRight)
+			: topLeft(_topLeft),
+			bottomRight(_bottomRight)
+			{
+			}
+		};
+
+		// Returns the maximum coordinate allowed for the cursor
+		// Return is zero'd if it fails to fetch it
+		static Coordinate BufferSize()
+		{
+			Coordinate result;
+
+			CONSOLE_SCREEN_BUFFER_INFO conInfo;
+			if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
+			{
+				result.X = conInfo.dwSize.X;
+				result.Y = conInfo.dwSize.Y;
+			}
+
+			return result;
+		}
+
+		// Returns the current window viewport (part of the buffer on display)
+		// Return is zero'd if it fails to fetch it
+		static Rectangle ActiveViewport()
+		{
+			CONSOLE_SCREEN_BUFFER_INFO conInfo;
+			if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
+			{
+				return Rectangle(	conInfo.srWindow.Left,
+										conInfo.srWindow.Top,
+										conInfo.srWindow.Right,
+										conInfo.srWindow.Bottom);
+			}
+
+			return Rectangle();
+		}
+
+		std::ostream & operator >>(std::ostream & outputStream,
+			Rectangle & rect)
+		{
+			rect = ActiveViewport();
+			return outputStream;
+		}
 	}
 }
 
