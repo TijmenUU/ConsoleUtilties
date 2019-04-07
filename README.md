@@ -11,4 +11,4 @@ And even for the people with no CTRL+C / CTRL+V capabilities in their consoles: 
 ## Help?
 There is absolutely no guarantee that this code is robust in any way. It was build for giving my console applications some more abilities, but these applications don't even cover half of the possible use cases.
 
-Check the Example.cpp file in the src directory for some pointers as to how to use this.
+Check the `example.cpp` file in the src directory for some pointers as to how to use this.
