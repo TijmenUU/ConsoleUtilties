@@ -1,6 +1,6 @@
 #pragma once
 #include <cstring> // memcpy
-#include <exception>
+#include <stdexcept>
 #include <string>
 #include <Windows.h>
 

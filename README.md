@@ -1,7 +1,13 @@
 # ConsoleUtilties
 A collection of small header libraries to give your Win32 console applications some color and flexibility.
-- `extendedio.hpp` contains tools to color your output, set the output cursor, catch window events (resize, focus, key presses, mouse, etc.).
-- `clipboard.hpp` is a tiny header library that gives you copy and pasting to the clipboard for simple strings (std::string). Multibyte strings (std::wstring) are not supported at this time.
+- `clipboard.hpp` gives you copy and pasting to the clipboard for simple strings (std::string)
+- `color.hpp` contains tools to color your console output
+- `coordops.hpp` contains some basic operator implementations for basic arithmetic with the `COORD` structure
+- `cursor.hpp` contains iostream overloads for the `COORD` structure to manipulate the cursor (where things will be written)
+- `example.cpp` contains example usages of all the included header files
+- `window.hpp` contains tools to get information about the active window: how many characters can fit on the screen
+
+All header files are independent, but are more interesting when combined. Unfortunately they all need to include `Windows.h` as well, exposing a lot of Windows API cruft to the global namespace.
 
 # What is this for?
 Any platform running Windows (Win2K - Win10) should be fine. This is for people wanting that extra control over the console. Put text at specific coordinates. Use some fancy colors to highlight the important bits. Maybe even use the mouse, or handle window resizing events! All of this and more is made relatively easy. It at least spares you from doing a bunch of it yourself.
