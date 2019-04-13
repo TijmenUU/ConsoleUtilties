@@ -73,9 +73,9 @@ void DemonstrateCursor()
 	COORD timeCoord;
 	std::cout >> timeCoord;
 
-	const int millisecondsToWait = 3000U;
+	const long long millisecondsToWait = 3000U;
 	const auto start = std::chrono::system_clock::now();
-	int waitTime = 0U;
+	long long waitTime = 0U;
 	while (waitTime < millisecondsToWait)
 	{
 		const auto elapsedTime = std::chrono::system_clock::now() - start;

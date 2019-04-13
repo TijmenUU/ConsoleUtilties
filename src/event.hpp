@@ -29,74 +29,24 @@ namespace Event
 	*/
 	struct InputEvent : public INPUT_RECORD
 	{
-		Type GetEventType() const
-		{
-			return static_cast<Type>(EventType);
-		}
+		Type GetEventType() const;
 
-		InputEvent()
-		{
-			EventType = 0;
-		}
+		InputEvent();
 	};
 
 	// Returns the number of events actually read
-	std::size_t GetAll(InputEvent* events, const std::size_t size)
-	{
-		DWORD availableEvents = 0;
-		if (size == 0 ||
-			!GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE), &availableEvents) ||
-			availableEvents == 0)
-		{
-			return 0;
-		}
+	unsigned long GetAll(InputEvent* events, const std::size_t size);
 
-		DWORD itemsRead = 0;
-		ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),
-			&events[0],
-			size,
-			&itemsRead);
+	// Resizes the vector to the number of read events
+	void GetAll(std::vector<InputEvent>& events);
 
-		return itemsRead;
-	}
+	// Resizes the vector with a maximum of count events
+	std::vector<InputEvent> GetAll(const std::size_t count = 64);
 
-	void GetAll(std::vector<InputEvent> & events)
-	{
-		events.resize(GetAll(&events[0], events.size()));
-	}
-
-	std::vector<InputEvent> GetAll(const std::size_t count = 64)
-	{
-		std::vector<InputEvent> events;
-		events.resize(count);
-		GetAll(events);
-
-		return events;
-	}
-
-	InputEvent Get()
-	{
-		InputEvent ev;
-		
-		GetAll(&ev, 1);
-		
-		return ev;
-	}
+	InputEvent Get();
 }
 
-std::istream& operator >>(std::istream& inputStream,
-	Event::InputEvent& ev)
-{
-	ev = Event::Get();
-
-	return inputStream;
-}
+std::istream& operator >>(std::istream& inputStream, Event::InputEvent& ev);
 
 // Expects events to have a size >= 0
-std::istream& operator >>(std::istream& inputStream,
-	std::vector<Event::InputEvent>& events)
-{
-	Event::GetAll(events);
-
-	return inputStream;
-}
+std::istream& operator >>(std::istream& inputStream, std::vector<Event::InputEvent>& events);

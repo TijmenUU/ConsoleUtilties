@@ -131,7 +131,13 @@
     <ClInclude Include="src\window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\clipboard.cpp" />
+    <ClCompile Include="src\color.cpp" />
+    <ClCompile Include="src\coordops.cpp" />
+    <ClCompile Include="src\cursor.cpp" />
+    <ClCompile Include="src\event.cpp" />
     <ClCompile Include="src\example.cpp" />
+    <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,5 @@
 # ConsoleUtilties
-A collection of small header libraries to give your Win32 console applications some color and flexibility.
+A small library to give your Win32 console applications some color and flexibility.
 - `src/clipboard.hpp` gives you copy and pasting to the clipboard for simple strings (std::string)
 - `src/color.hpp` contains tools to color your console output
 - `src/coordops.hpp` contains some basic operator implementations for basic arithmetic with the `COORD` structure
@@ -8,7 +8,7 @@ A collection of small header libraries to give your Win32 console applications s
 - `src/example.cpp` contains example usages of all the included header files
 - `src/window.hpp` contains tools to get information about the active window: how many characters can fit on the screen
 
-All header files are independent, but are more interesting when combined. Unfortunately they all need to include `Windows.h` as well, exposing a lot of Windows API cruft to the global namespace.
+All header/source file couples are independent, but are more interesting when combined. Unfortunately they all need to include `Windows.h` as well, exposing a lot of Windows API cruft to the global namespace.
 
 Do checkout the included Visual Studio 2019 project to build the example showcase.
 
