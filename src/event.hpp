@@ -24,7 +24,7 @@ namespace Event
 		- MENU_EVENT_RECORD MenuEvent;
 		- FOCUS_EVENT_RECORD FocusEvent;
 
-		Be sure to evaluate the EventType before you try accessing the
+		Be sure to evaluate the event Type before you try accessing the
 		Event member variable.
 	*/
 	struct InputEvent : public INPUT_RECORD
