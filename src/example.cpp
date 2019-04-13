@@ -4,8 +4,10 @@
 #include "color.hpp"
 #include "coordops.hpp"
 #include "cursor.hpp"
+#include "event.hpp"
 #include <iomanip>
 #include <thread> // sleep
+#include <vector>
 #include "window.hpp"
 
 const std::string cTestString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sollicitudin mi arcu, in semper nisl suscipit id. Praesent laoreet ultrices leo, quis tincidunt purus porttitor at. Maecenas molestie a orci a pharetra. In vitae lacus eleifend, viverra ante ut, ornare sapien. Vivamus ullamcorper iaculis dolor et venenatis. Etiam viverra scelerisque egestas. In ac risus eu purus ultrices egestas. Duis tristique facilisis eros eu gravida. Curabitur eget lacinia magna. Maecenas tristique dui neque, at elementum augue ultrices sed. Morbi dignissim dolor sed erat molestie, a fringilla tellus dignissim. Mauris eget metus et dui vulputate interdum a ac neque. In nisl arcu, suscipit et fringilla vitae, tincidunt sit amet lectus. Nam vitae aliquam felis. Praesent volutpat pharetra lacus.\r\n\r\nFusce consequat leo porta, cursus mi in, fringilla lorem. Ut in ligula varius, elementum tellus sit amet, pretium lorem. Cras nec vulputate ante. Quisque fringilla scelerisque quam, quis pulvinar nibh facilisis nec. Donec nec cursus elit. Aenean egestas viverra turpis sit amet tincidunt. Morbi volutpat est sed eros malesuada, in pretium metus imperdiet. Proin ac orci at ipsum rhoncus tristique. Sed eget volutpat nisi, sit amet congue risus.";
@@ -96,6 +98,31 @@ void DemonstrateCursor()
 	std::cout << originalColor;
 }
 
+void DemonstrateEvents()
+{
+	const unsigned inputBufferSize = 16;
+	std::cout << "Please press the Escape key to exit...";
+
+	std::vector<Event::InputEvent> events;
+	events.resize(inputBufferSize);
+	while (true)
+	{
+		Event::GetAll(events);
+		for (Event::InputEvent ev : events)
+		{
+			if (ev.GetEventType() == Event::Type::KEY &&
+				ev.Event.KeyEvent.bKeyDown &&
+				ev.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
+			{
+				return;
+			}
+		}
+
+		events.resize(inputBufferSize);
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
+}
+
 int main(int argc, char** argv)
 {
 	DemonstrateColors();
@@ -105,6 +132,8 @@ int main(int argc, char** argv)
 	DemonstrateWindowUtils();
 
 	DemonstrateCursor();
+
+	DemonstrateEvents();
 
 	return 0;
 }

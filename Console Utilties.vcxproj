@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\event.hpp" />
     <ClInclude Include="src\clipboard.hpp" />
     <ClInclude Include="src\color.hpp" />
     <ClInclude Include="src\coordops.hpp" />
