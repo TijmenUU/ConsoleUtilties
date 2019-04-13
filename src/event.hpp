@@ -43,8 +43,13 @@ namespace Event
 	// Returns the number of events actually read
 	std::size_t GetAll(InputEvent* events, const std::size_t size)
 	{
-		if (size == 0)
+		DWORD availableEvents = 0;
+		if (size == 0 ||
+			!GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE), &availableEvents) ||
+			availableEvents == 0)
+		{
 			return 0;
+		}
 
 		DWORD itemsRead = 0;
 		ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),
