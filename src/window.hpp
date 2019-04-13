@@ -37,7 +37,7 @@ namespace Window
 	// Return is zero'd if it fails to fetch it
 	COORD BufferSize()
 	{
-		COORD result;
+		COORD result{ 0, 0 };
 
 		CONSOLE_SCREEN_BUFFER_INFO conInfo;
 		if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
