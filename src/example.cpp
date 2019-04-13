@@ -76,9 +76,9 @@ void DemonstrateCursor()
 	int waitTime = 0U;
 	while (waitTime < millisecondsToWait)
 	{
-		const auto elapsedTime = std::chrono::system_clock::now() - start;		
+		const auto elapsedTime = std::chrono::system_clock::now() - start;
 		waitTime = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
-		
+
 		double remainingTime = static_cast<double>(millisecondsToWait - waitTime) / 1000.0;
 		if (remainingTime < 0.0)
 			remainingTime = 0.0;

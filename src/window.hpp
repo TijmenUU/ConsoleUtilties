@@ -40,7 +40,7 @@ namespace Window
 		COORD result;
 
 		CONSOLE_SCREEN_BUFFER_INFO conInfo;
-		if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
+		if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
 		{
 			result.X = conInfo.dwSize.X;
 			result.Y = conInfo.dwSize.Y;
@@ -54,7 +54,7 @@ namespace Window
 	Rectangle ActiveViewport()
 	{
 		CONSOLE_SCREEN_BUFFER_INFO conInfo;
-		if(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
+		if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &conInfo))
 		{
 			return Rectangle(
 				conInfo.srWindow.Left,
